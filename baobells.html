@@ -656,17 +656,87 @@ input[type=file]{display:none}
 <script>
 // ── Exercise data ─────────────────────────────
 const EX = {
-  Chest:     {ic:"ti-barbell",              ls:["Bench Press","Inclined Bench","Push-ups","Cable Flys","Pec Deck","Dumbbell Flys","Dumbbell Pullovers"]},
-  Back:      {ic:"ti-arrows-vertical",      ls:["Deadlift","Bentover Rows","Cable Rows","Lat Pulldowns","Reverse Flys","Pull-ups","T-Bar Row"]},
-  Shoulders: {ic:"ti-arrow-up",             ls:["Overhead Press","Lat Raises","Front Raises","Facepulls","Arnold Press","Cable Lateral Raise"]},
-  Biceps:    {ic:"ti-arrow-bend-up-right",  ls:["Dumbbell Curls","Barbell Curls","Chinups","Hammer Curls","Cable Curls","Preacher Curl"]},
-  Triceps:   {ic:"ti-arrow-bend-down-right",ls:["Tricep Pushdown","Skullcrushers","Dips","Overhead Extension","Close-grip Bench"]},
-  Glute:     {ic:"ti-triangle",             ls:["Hip Thrust","Romanian Deadlift","Cable Kickback","Glute Bridge","Sumo Squat"]},
-  Hamstrings:{ic:"ti-line",                 ls:["Leg Curl","Nordic Curl","Good Mornings","Stiff-leg Deadlift","Single-leg Deadlift"]},
-  Quads:     {ic:"ti-square",               ls:["Squat","Leg Press","Lunges","Leg Extension","Hack Squat","Bulgarian Split Squat"]},
-  Abs:       {ic:"ti-menu-2",               ls:["Plank","Crunches","Leg Raises","Cable Crunch","Ab Wheel Rollout","Hanging Knee Raise","Russian Twist","Decline Crunch","Hollow Body Hold","Bicycle Crunch","Dead Bug","Side Plank"]},
-  Calves:    {ic:"ti-arrow-down",           ls:["Standing Calf Raise","Seated Calf Raise","Leg Press Calf Raise","Single-leg Calf Raise","Donkey Calf Raise","Jump Rope"]},
-  "Warm-up": {ic:"ti-flame",               ls:["Treadmill Walk","Row Machine","Bike","Jump Rope","Arm Circles","Hip Circles","Leg Swings","World's Greatest Stretch","Inchworm","Band Pull-apart","Shoulder Dislocate","Cat-Cow","Hip Flexor Stretch","Hamstring Stretch","Quad Stretch","Thoracic Rotation"]}
+  Chest:     {ic:"ti-barbell",              ls:[
+    "Bench Press","Inclined Bench","Decline Bench","Push-ups","Wide Push-ups","Diamond Push-ups",
+    "Cable Flys","Low Cable Fly","High Cable Fly","Pec Deck","Dumbbell Flys","Incline Dumbbell Fly",
+    "Dumbbell Pullovers","Chest Dips","Landmine Press","Smith Machine Bench"
+  ]},
+  Back:      {ic:"ti-arrows-vertical",      ls:[
+    "Deadlift","Conventional Deadlift","Sumo Deadlift","Romanian Deadlift",
+    "Bentover Rows","Barbell Row","Dumbbell Row","Cable Rows","Seated Cable Row",
+    "Lat Pulldowns","Wide-grip Pulldown","Close-grip Pulldown",
+    "Pull-ups","Chin-ups","Neutral-grip Pull-up",
+    "T-Bar Row","Meadows Row","Rack Pulls","Straight-arm Pulldown",
+    "Reverse Flys","Face Pulls","Shrugs","Trap Bar Deadlift"
+  ]},
+  Shoulders: {ic:"ti-arrow-up",             ls:[
+    "Overhead Press","Seated Dumbbell Press","Arnold Press","Push Press",
+    "Lat Raises","Cable Lateral Raise","Machine Lateral Raise",
+    "Front Raises","Cable Front Raise","Plate Front Raise",
+    "Facepulls","Rear Delt Fly","Reverse Pec Deck",
+    "Upright Row","Cable Upright Row","Shrugs","Landmine Lateral Raise"
+  ]},
+  Biceps:    {ic:"ti-arrow-bend-up-right",  ls:[
+    "Dumbbell Curls","Alternating Dumbbell Curl","Incline Dumbbell Curl",
+    "Barbell Curls","EZ-Bar Curl","Preacher Curl","Scott Curl",
+    "Chinups","Hammer Curls","Cross-body Hammer Curl",
+    "Cable Curls","Cable Rope Curl","Spider Curl","Concentration Curl","21s"
+  ]},
+  Triceps:   {ic:"ti-arrow-bend-down-right",ls:[
+    "Tricep Pushdown","Rope Pushdown","Bar Pushdown","Reverse Grip Pushdown",
+    "Skullcrushers","EZ-Bar Skullcrusher","Dumbbell Skullcrusher",
+    "Dips","Bench Dips","Weighted Dips",
+    "Overhead Extension","Overhead Rope Extension","Single-arm Extension",
+    "Close-grip Bench","Diamond Push-ups","Kickbacks","Tate Press"
+  ]},
+  Glute:     {ic:"ti-triangle",             ls:[
+    "Hip Thrust","Barbell Hip Thrust","Single-leg Hip Thrust",
+    "Romanian Deadlift","Single-leg RDL",
+    "Cable Kickback","Donkey Kickback","Hip Abduction Machine",
+    "Glute Bridge","Weighted Glute Bridge","Frog Pump",
+    "Sumo Squat","Sumo Deadlift","Step-ups","Lateral Band Walk","Clamshells"
+  ]},
+  Hamstrings:{ic:"ti-line",                 ls:[
+    "Leg Curl","Lying Leg Curl","Seated Leg Curl","Nordic Curl",
+    "Good Mornings","Romanian Deadlift","Stiff-leg Deadlift",
+    "Single-leg Deadlift","Single-leg Leg Curl","Glute Ham Raise","Kettlebell Swing"
+  ]},
+  Quads:     {ic:"ti-square",               ls:[
+    "Squat","Back Squat","Front Squat","Box Squat","Pause Squat",
+    "Leg Press","45-degree Leg Press","Hack Squat","Smith Machine Squat",
+    "Lunges","Walking Lunges","Reverse Lunges","Lateral Lunges",
+    "Leg Extension","Single-leg Extension",
+    "Bulgarian Split Squat","Step-ups","Goblet Squat","Sissy Squat"
+  ]},
+  Abs:       {ic:"ti-menu-2",               ls:[
+    "Plank","Long Plank","RKC Plank",
+    "Side Plank","Side Plank Hip Dip",
+    "Hollow Body Hold","Hollow Rock",
+    "Hanging Leg Raise","Hanging Knee Raise","Toes to Bar",
+    "Ab Wheel Rollout","Kneeling Ab Rollout",
+    "Cable Crunch","Rope Cable Crunch","Kneeling Cable Crunch",
+    "Russian Twist","Weighted Russian Twist",
+    "Bicycle Crunch","Reverse Crunch","Decline Crunch","Crunch",
+    "Dead Bug","Bird Dog",
+    "Leg Raises","Flutter Kicks","Scissor Kicks",
+    "V-up","Jackknife","Dragon Flag",
+    "Pallof Press","Woodchop","Landmine Rotation"
+  ]},
+  Calves:    {ic:"ti-arrow-down",           ls:[
+    "Standing Calf Raise","Machine Calf Raise","Barbell Calf Raise",
+    "Seated Calf Raise","Leg Press Calf Raise",
+    "Single-leg Calf Raise","Donkey Calf Raise",
+    "Jump Rope","Box Jumps","Tibialis Raise"
+  ]},
+  "Warm-up": {ic:"ti-flame",               ls:[
+    "Treadmill Walk","Treadmill Jog","Row Machine","Bike","Elliptical","Jump Rope",
+    "Arm Circles","Hip Circles","Leg Swings","Ankle Circles",
+    "World Greatest Stretch","Inchworm","Walking Lunges",
+    "Band Pull-apart","Shoulder Dislocate","Cat-Cow",
+    "Hip Flexor Stretch","Hamstring Stretch","Quad Stretch",
+    "Thoracic Rotation","90/90 Hip Stretch","Pigeon Pose",
+    "Dead Hang","Wrist Circles"
+  ]}
 };
 
 // Main compound lifts → 5 sets × 5 reps (heavy)
@@ -1374,24 +1444,66 @@ function renderAI(){
   document.getElementById("ai-times").innerHTML=AI_OPTS.times.map(o=>`<div class="ai-opt${S.aiSel.time===o.v?" sel":""}" onclick="S.aiSel.time='${o.v}';renderAI()"><div class="ai-opt-lbl">${o.l}</div><i class="ti ti-check ai-chk"></i></div>`).join("");
   document.getElementById("ai-equip").innerHTML=AI_OPTS.equip.map(o=>`<div class="ai-opt${S.aiSel.equip===o.v?" sel":""}" onclick="S.aiSel.equip='${o.v}';renderAI()"><div class="ai-opt-lbl">${o.l}</div><i class="ti ti-check ai-chk"></i></div>`).join("");
 }
-async function generateWorkout(){
+function generateWorkout(){
   const {goal,time,equip}=S.aiSel;
-  if(!goal||!time||!equip){alert("Select goal, time, and equipment first.");return;}
+  if(!goal||!time||!equip){alert("Select a goal, time, and equipment first.");return;}
   const btn=document.getElementById("gen-btn"),res=document.getElementById("ai-result");
-  btn.disabled=true;btn.innerHTML=`<div class="spinner"></div> Generating...`;res.classList.remove("show");
-  const allEx=Object.entries(EX).flatMap(([m,d])=>d.ls.map(n=>`${n} (${m})`)).join(", ");
-  const prompt=`You are a certified strength coach. Build one workout session.\nGoal: ${goal}, Time: ${time} min, Equipment: ${equip}\nOnly use exercises from: ${allEx}\nReturn ONLY valid JSON (no markdown):\n{"name":"string","focus":"string","duration":"${time}","exercises":[{"name":"string","muscle":"string","sets":3}]}\n4-7 exercises, 3-5 sets each.`;
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})});
-    const data=await r.json();
-    const txt=(data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join("").replace(/```json|```/g,"").trim();
-    const plan=JSON.parse(txt);
-    if(plan.exercises) plan.exercises=plan.exercises.map(e=>({...e,sets:e.sets||defaultSets(e.name),targetReps:e.targetReps||defaultReps(e.name)}));
-    plan.aiGenerated=true;plan.created=Date.now();
+  btn.disabled=true;btn.innerHTML=`<div class="spinner"></div> Building...`;res.classList.remove("show");
+
+  const mins=parseInt(time)||45;
+  const CABLE_EX=new Set(["Cable Flys","Low Cable Fly","High Cable Fly","Cable Rows","Seated Cable Row","Lat Pulldowns","Wide-grip Pulldown","Close-grip Pulldown","Straight-arm Pulldown","Cable Lateral Raise","Cable Front Raise","Facepulls","Rear Delt Fly","Cable Curls","Cable Rope Curl","Tricep Pushdown","Rope Pushdown","Bar Pushdown","Reverse Grip Pushdown","Overhead Rope Extension","Cable Crunch","Rope Cable Crunch","Kneeling Cable Crunch","Pallof Press","Woodchop","Landmine Rotation","Cable Kickback","Cable Upright Row"]);
+  const MACHINE_EX=new Set(["Pec Deck","Leg Press","Leg Extension","Lying Leg Curl","Seated Leg Curl","Machine Calf Raise","Seated Calf Raise","Machine Lateral Raise","Reverse Pec Deck","Hip Abduction Machine","Hack Squat","Smith Machine Bench","Smith Machine Squat","45-degree Leg Press","Single-leg Extension"]);
+  const BARBELL_EX=new Set(["Bench Press","Decline Bench","Barbell Curls","EZ-Bar Curl","Barbell Row","Overhead Press","Deadlift","Conventional Deadlift","Sumo Deadlift","Back Squat","Front Squat","Box Squat","Pause Squat","Romanian Deadlift","Stiff-leg Deadlift","Good Mornings","Barbell Hip Thrust","Barbell Calf Raise","EZ-Bar Skullcrusher","T-Bar Row","Rack Pulls","Upright Row","Shrugs","Trap Bar Deadlift","Landmine Press","Scott Curl"]);
+
+  function exAllowed(n){
+    if(equip==="dumbbells only") return !CABLE_EX.has(n)&&!MACHINE_EX.has(n)&&!BARBELL_EX.has(n);
+    if(equip==="barbells and rack") return !CABLE_EX.has(n)&&!MACHINE_EX.has(n);
+    if(equip==="cables and machines") return !BARBELL_EX.has(n);
+    return true;
+  }
+
+  const TEMPLATES={
+    hypertrophy:{push:["Chest","Shoulders","Triceps","Abs"],pull:["Back","Biceps","Abs"],legs:["Quads","Hamstrings","Glute","Calves","Abs"],upper:["Chest","Back","Shoulders","Biceps","Triceps"],full:["Chest","Back","Quads","Shoulders","Hamstrings","Abs"]},
+    strength:{push:["Chest","Shoulders","Triceps"],pull:["Back","Biceps"],legs:["Quads","Hamstrings","Glute"],upper:["Chest","Back","Shoulders"],full:["Back","Quads","Chest","Hamstrings","Shoulders"]},
+    "fat loss":{push:["Chest","Shoulders","Triceps","Abs"],pull:["Back","Biceps","Abs"],legs:["Quads","Hamstrings","Glute","Calves","Abs"],upper:["Chest","Back","Shoulders","Abs"],full:["Quads","Chest","Back","Shoulders","Abs","Calves"]},
+    performance:{push:["Chest","Shoulders","Triceps","Abs"],pull:["Back","Biceps","Abs"],legs:["Quads","Hamstrings","Glute","Calves"],upper:["Back","Chest","Shoulders","Biceps"],full:["Quads","Hamstrings","Back","Shoulders","Abs"]}
+  };
+
+  const numEx=mins<=30?4:mins<=45?5:mins<=60?6:7;
+  const setsPerEx=goal==="strength"?5:4;
+  const tmpl=TEMPLATES[goal]||TEMPLATES.hypertrophy;
+  const splitKeys=Object.keys(tmpl);
+  const split=splitKeys[Math.floor(Math.random()*splitKeys.length)];
+  const muscleOrder=tmpl[split];
+
+  const chosen=[];
+  for(const muscle of muscleOrder){
+    if(chosen.length>=numEx) break;
+    const pool=(EX[muscle]?.ls||[]).filter(exAllowed).filter(n=>!chosen.find(e=>e.name===n));
+    if(!pool.length) continue;
+    const mainPool=goal==="strength"?pool.filter(n=>MAIN_LIFTS.has(n)):[];
+    const pick=(mainPool.length?mainPool:pool)[Math.floor(Math.random()*(mainPool.length||pool.length))];
+    chosen.push({name:pick,muscle,sets:setsPerEx,targetReps:defaultReps(pick)});
+  }
+  // fill any remaining slots
+  for(const muscle of muscleOrder){
+    if(chosen.length>=numEx) break;
+    const pool=(EX[muscle]?.ls||[]).filter(exAllowed).filter(n=>!chosen.find(e=>e.name===n));
+    if(pool.length) chosen.push({name:pool[Math.floor(Math.random()*pool.length)],muscle,sets:setsPerEx,targetReps:defaultReps(pool[0])});
+  }
+
+  const namePool={hypertrophy:["Hypertrophy","Volume","Pump","Size"],strength:["Strength","Power","Heavy"],"fat loss":["Burn","Metabolic","Conditioning"],performance:["Performance","Athletic","Power"]};
+  const splitLabel=split.charAt(0).toUpperCase()+split.slice(1);
+  const focusMap={hypertrophy:"Hypertrophy",strength:"Strength","fat loss":"Fat Loss",performance:"Athletic Performance"};
+  const planName=(namePool[goal]||["Custom"])[Math.floor(Math.random()*(namePool[goal]||["Custom"]).length)]+" "+splitLabel;
+
+  setTimeout(()=>{
+    const plan={name:planName,focus:focusMap[goal]||"General",duration:time,exercises:chosen,aiGenerated:true,created:Date.now()};
     S.plans.unshift(plan);sv("bb_plans",S.plans);renderPlans();
-    res.textContent=`✓ "${plan.name}" saved!\n${plan.exercises.length} exercises · ~${plan.duration} min\n\n`+plan.exercises.map(e=>`• ${e.name} — ${e.sets} sets`).join("\n");res.classList.add("show");
-  }catch(e){res.textContent="Could not generate. Check connection.\n"+e.message;res.classList.add("show");}
-  btn.disabled=false;btn.innerHTML=`<i class="ti ti-sparkles"></i> Generate Workout`;
+    res.textContent=`✓ "${plan.name}" saved!\n${chosen.length} exercises · ~${time} min\n\n`+chosen.map(e=>`• ${e.name} (${e.muscle}) — ${e.sets} sets × ${e.targetReps} reps`).join("\n");
+    res.classList.add("show");
+    btn.disabled=false;btn.innerHTML=`<i class="ti ti-sparkles"></i> Generate Workout`;
+  },700);
 }
 
 // ─── LIBRARY ──────────────────────────────────
