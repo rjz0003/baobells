@@ -270,7 +270,11 @@ body{color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;overflow:h
 .fab:hover{filter:brightness(1.1);transform:scale(1.06)}
 
 /* builder */
-.b-ex-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rm);margin-bottom:5px}
+.b-ex-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rm);margin-bottom:5px;touch-action:none;user-select:none;-webkit-user-select:none;transition:box-shadow .15s,opacity .15s}
+.b-ex-item.dragging{opacity:.5;box-shadow:0 8px 24px rgba(0,0,0,.5);border-color:var(--accent)}
+.b-ex-item.drag-over{border-color:var(--accent);background:var(--accentdim)}
+.b-drag-handle{color:var(--hint);font-size:18px;cursor:grab;padding:2px 4px;flex-shrink:0;touch-action:none}
+.b-drag-handle:active{cursor:grabbing;color:var(--muted)}
 .b-ex-ph{width:36px;height:36px;border-radius:6px;background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--hint);flex-shrink:0}
 .b-ex-img{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)}
 .b-ex-name{flex:1;font-size:14px;font-weight:500;color:var(--text)}
@@ -1223,12 +1227,104 @@ function renderBuilderList(){
   const d=document.getElementById("b-ex-list");
   if(!S.builderExs.length){d.innerHTML=`<div style="text-align:center;padding:14px;color:var(--hint);font-size:13px">No exercises yet</div>`;return;}
   d.innerHTML=S.builderExs.map((ex,i)=>`
-    <div class="b-ex-item">
+    <div class="b-ex-item" data-idx="${i}"
+      draggable="true"
+      ondragstart="builderDragStart(event,${i})"
+      ondragover="builderDragOver(event,${i})"
+      ondragend="builderDragEnd(event)"
+      ondrop="builderDrop(event,${i})">
+      <div class="b-drag-handle" title="Drag to reorder"><i class="ti ti-grip-vertical"></i></div>
       ${photoThumb(ex.name,"b-ex-img")}
       <div class="b-ex-name">${ex.name}</div>
       <div class="b-sets-wrap"><input class="b-sets-in" type="number" value="${ex.sets||defaultSets(ex.name)}" min="1" max="20" oninput="S.builderExs[${i}].sets=parseInt(this.value)||3" style="width:32px"> sets × <input class="b-sets-in" type="number" value="${ex.targetReps||defaultReps(ex.name)}" min="1" max="50" oninput="S.builderExs[${i}].targetReps=parseInt(this.value)||defaultReps(S.builderExs[${i}].name)" style="width:32px"> reps</div>
       <button class="b-rm" onclick="S.builderExs.splice(${i},1);renderBuilderList()"><i class="ti ti-x"></i></button>
     </div>`).join("");
+  initBuilderTouchDrag();
+}
+
+// ── Desktop drag-and-drop ──────────────────────────────────────────────────
+let _dragFromIdx = -1;
+function builderDragStart(e, idx){
+  _dragFromIdx = idx;
+  e.dataTransfer.effectAllowed = "move";
+  e.currentTarget.classList.add("dragging");
+}
+function builderDragOver(e, idx){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  document.querySelectorAll(".b-ex-item").forEach(el => el.classList.remove("drag-over"));
+  if(idx !== _dragFromIdx) e.currentTarget.classList.add("drag-over");
+}
+function builderDrop(e, toIdx){
+  e.preventDefault();
+  if(_dragFromIdx < 0 || _dragFromIdx === toIdx) return;
+  const moved = S.builderExs.splice(_dragFromIdx, 1)[0];
+  S.builderExs.splice(toIdx, 0, moved);
+  _dragFromIdx = -1;
+  renderBuilderList();
+}
+function builderDragEnd(e){
+  _dragFromIdx = -1;
+  document.querySelectorAll(".b-ex-item").forEach(el => {
+    el.classList.remove("dragging","drag-over");
+  });
+}
+
+// ── Touch drag-and-drop (iPhone) ───────────────────────────────────────────
+function initBuilderTouchDrag(){
+  const list = document.getElementById("b-ex-list");
+  if(!list) return;
+  let dragEl=null, dragIdx=-1, clone=null, startY=0, itemH=0;
+
+  list.querySelectorAll(".b-drag-handle").forEach(handle => {
+    handle.addEventListener("touchstart", e => {
+      const item = handle.closest(".b-ex-item");
+      dragIdx = parseInt(item.dataset.idx);
+      dragEl = item;
+      itemH = item.offsetHeight;
+      startY = e.touches[0].clientY;
+      // Create floating clone
+      clone = item.cloneNode(true);
+      clone.style.cssText = `position:fixed;left:${item.getBoundingClientRect().left}px;top:${item.getBoundingClientRect().top}px;width:${item.offsetWidth}px;z-index:9999;opacity:0.9;box-shadow:0 12px 32px rgba(0,0,0,.6);border-radius:var(--rm);pointer-events:none;background:var(--bg4);border:1px solid var(--accent)`;
+      document.body.appendChild(clone);
+      item.style.opacity = "0.3";
+      e.preventDefault();
+    }, {passive:false});
+
+    handle.addEventListener("touchmove", e => {
+      if(!clone) return;
+      const dy = e.touches[0].clientY - startY;
+      clone.style.top = (parseFloat(clone.style.top) + dy) + "px";
+      startY = e.touches[0].clientY;
+      // Find which item we're hovering over
+      const touchY = e.touches[0].clientY;
+      list.querySelectorAll(".b-ex-item").forEach(el => {
+        el.classList.remove("drag-over");
+        const r = el.getBoundingClientRect();
+        if(touchY > r.top && touchY < r.bottom && el !== dragEl){
+          el.classList.add("drag-over");
+        }
+      });
+      e.preventDefault();
+    }, {passive:false});
+
+    handle.addEventListener("touchend", e => {
+      if(!clone) return;
+      clone.remove(); clone = null;
+      if(dragEl) dragEl.style.opacity = "";
+      // Find drop target
+      const overEl = list.querySelector(".b-ex-item.drag-over");
+      if(overEl && dragIdx >= 0){
+        const toIdx = parseInt(overEl.dataset.idx);
+        if(toIdx !== dragIdx){
+          const moved = S.builderExs.splice(dragIdx, 1)[0];
+          S.builderExs.splice(toIdx, 0, moved);
+        }
+      }
+      dragEl=null; dragIdx=-1;
+      renderBuilderList();
+    }, {passive:false});
+  });
 }
 function savePlan(){
   const name=document.getElementById("b-name").value.trim();
