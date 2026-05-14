@@ -26,8 +26,9 @@
   --amber:#e8c23a;--blue:#4a9ef5;--red:#f05050;
   --r:12px;--rm:8px;
 }
-html{height:100%;background:var(--bg)}body{height:100%;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;overflow:hidden;position:fixed;width:100%;-webkit-overflow-scrolling:touch}
-body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
+html,body{height:100%;background:var(--bg)}
+body{color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;overflow:hidden}
+#app{display:flex;flex-direction:column;max-width:480px;width:100%;margin:0 auto;height:100%;position:relative;overflow:hidden;background:var(--bg)}
 
 /* ─── HEADER ─────────────────────────────── */
 .header{padding:14px 18px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg);z-index:10}
@@ -38,9 +39,9 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:r
 .icon-btn:hover{border-color:var(--border2);color:var(--text)}
 
 /* ─── LAYOUT ─────────────────────────────── */
-.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 14px 90px}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 14px 90px;min-height:0}
 .content::-webkit-scrollbar{display:none}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg2);border-top:1px solid var(--border);display:flex;padding:6px 4px;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:100}
+.nav{position:absolute;bottom:0;left:0;right:0;width:100%;background:var(--bg2);border-top:1px solid var(--border);display:flex;padding:6px 4px;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:100}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 2px;border:none;background:transparent;color:var(--hint);font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:.15s;font-family:'Barlow Condensed',sans-serif;border-radius:var(--rm)}
 .nav-btn i{font-size:21px}
 .nav-btn.active{color:var(--accent)}
@@ -265,7 +266,7 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:r
 .plan-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:3px}
 .plan-meta{font-size:12px;color:var(--muted);margin-bottom:7px}
 .plan-tags{display:flex;gap:5px;flex-wrap:wrap}
-.fab{position:fixed;bottom:78px;right:max(14px,calc(50% - 226px));width:50px;height:50px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:24px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:90;box-shadow:0 4px 18px rgba(240,120,32,.42);transition:.15s}
+.fab{position:fixed;bottom:78px;right:16px;width:50px;height:50px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:24px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:200;box-shadow:0 4px 18px rgba(240,120,32,.42);transition:.15s}
 .fab:hover{filter:brightness(1.1);transform:scale(1.06)}
 
 /* builder */
@@ -365,6 +366,7 @@ input[type=file]{display:none}
 </style>
 </head>
 <body>
+<div id="app">
 
 <div class="header">
   <div class="logo">BAO<span>BELLS</span></div>
@@ -477,9 +479,11 @@ input[type=file]{display:none}
   <button class="nav-btn" id="nav-history" onclick="showPage('history')"><i class="ti ti-history"></i>History</button>
 </nav>
 
+</div><!-- /#app -->
+
 <button class="fab" id="fab" onclick="openBuilder(-1)"><i class="ti ti-plus"></i></button>
 
-<!-- ACTIVE WORKOUT SCREEN -->
+<!-- ACTIVE WORKOUT SCREEN - outside #app so it covers full viewport -->
 <div class="workout-screen" id="workout-screen">
   <!-- top bar -->
   <div class="wk-header">
