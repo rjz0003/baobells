@@ -1036,14 +1036,18 @@ function renderWkScreen(){
     `<div class="wk-pip${i < ex.completedSets.length ? " done" : i === ex.completedSets.length ? " active" : ""}"></div>`
   ).join("");
 
-  // Set 1: use _lockedWeight (user-adjustable with arrows, defaults to saved weight)
-  // Set 2+: automatically update from previous set's RPE via getSuggestedWeight()
+  // Set 1: default to saved starting weight
+  // Set 2+: suggest weight from RPE, but only if user hasn't manually overridden it
   if(ex.completedSets.length === 0){
-    // First set - use locked weight or saved starting weight
     if(!wk._lockedWeight) wk._lockedWeight = roundTo5(ex.startWeight || 0);
+    wk._weightManualOverride = false; // reset override flag for new exercise
   } else {
-    // Subsequent sets - weight driven by RPE formula from last set
-    wk._lockedWeight = roundTo5(getSuggestedWeight()) || wk._lockedWeight;
+    if(!wk._weightManualOverride){
+      // Apply RPE suggestion automatically
+      wk._lockedWeight = roundTo5(getSuggestedWeight()) || wk._lockedWeight;
+    }
+    // Always reset override flag after rendering so next set starts fresh from RPE
+    wk._weightManualOverride = false;
   }
   updateWeightDisplay();
 
@@ -1072,25 +1076,27 @@ function updateWeightDisplay(){
   const el = document.getElementById("wk-weight-val");
   const lbl = document.getElementById("wk-weight-label");
   if(el) el.textContent = wk._lockedWeight || "—";
-  // show "adjust" label only on set 1 before any sets logged
   const ex = wk.exercises[wk.exIdx];
+  // Buttons always active — user can always override
+  document.querySelectorAll(".wk-adj-btn").forEach(b => { b.style.opacity="1"; b.style.pointerEvents="auto"; });
   if(ex.completedSets.length === 0){
-    if(lbl) lbl.textContent = "POUNDS — USE ARROWS TO SET";
-    document.querySelectorAll(".wk-adj-btn").forEach(b => { b.style.opacity="1"; b.style.pointerEvents="auto"; });
+    if(lbl) lbl.textContent = "POUNDS";
   } else {
+    // Show whether this is the RPE suggestion or a manual override
     const last = ex.completedSets[ex.completedSets.length-1];
+    const suggested = roundTo5(getSuggestedWeight()) || wk._lockedWeight;
+    const isOverride = wk._lockedWeight !== suggested;
     const arrow = wk._lockedWeight > last.weight ? " ↑" : wk._lockedWeight < last.weight ? " ↓" : "";
-    if(lbl) lbl.textContent = "POUNDS — ADJUSTED BY RPE" + arrow;
-    document.querySelectorAll(".wk-adj-btn").forEach(b => { b.style.opacity="0.3"; b.style.pointerEvents="none"; });
+    if(lbl) lbl.textContent = isOverride ? "POUNDS — OVERRIDE" : "POUNDS — RPE SUGGEST" + arrow;
   }
 }
 
 function adjustWeight(delta){
   const wk = S.wk;
-  const ex = wk.exercises[wk.exIdx];
-  if(ex.completedSets.length > 0) return;
   wk._lockedWeight = Math.max(0, (wk._lockedWeight||0) + delta);
   wk._lockedWeight = roundTo5(wk._lockedWeight);
+  // Mark as manually overridden so renderWkScreen won't overwrite it with RPE suggestion
+  wk._weightManualOverride = true;
   updateWeightDisplay();
 }
 
