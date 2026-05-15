@@ -472,6 +472,31 @@ input[type=file]{display:none}
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--accent);min-width:40px;text-align:right" id="rest-disp">90s</span>
       </div>
     </div>
+
+    <div class="slabel" style="margin-bottom:10px;margin-top:4px">Data backup</div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px">
+        Export saves everything — workout history, saved plans, exercise weights, and photos — to a file on your device. Import restores it. Do this before any app update as a precaution.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button onclick="exportData()" style="width:100%;padding:13px;border-radius:var(--r);border:1px solid var(--greenborder);background:var(--greendim);color:var(--green);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><i class="ti ti-download"></i> Export My Data</button>
+        <label style="width:100%;padding:13px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg4);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" for="import-file-input"><i class="ti ti-upload"></i> Import Backup</label>
+        <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importData(this)">
+        <div id="backup-status" style="font-size:12px;color:var(--green);text-align:center;min-height:16px"></div>
+      </div>
+    </div>
+
+    <div class="slabel" style="margin-bottom:10px;margin-top:4px">App info</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">
+        <span style="font-size:14px;color:var(--muted)">Version</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--hint)" id="app-version-display">1.0.0</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-top:1px solid var(--border);margin-top:8px">
+        <span style="font-size:14px;color:var(--muted)">Data stored</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--hint)" id="data-size-display">—</span>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1771,7 +1796,7 @@ function showPage(id){
   if(id==="history")renderHistory();
   if(id==="library")renderLibrary();
   if(id==="workouts"){renderPlans();renderAI();}
-  if(id==="formula"){document.getElementById("scale-slider").value=S.scale;document.getElementById("scale-disp").textContent=parseFloat(S.scale).toFixed(1)+"×";document.getElementById("rest-slider").value=S.restSecs;document.getElementById("rest-disp").textContent=S.restSecs+"s";renderFormula();}
+  if(id==="formula"){document.getElementById("scale-slider").value=S.scale;document.getElementById("scale-disp").textContent=parseFloat(S.scale).toFixed(1)+"×";document.getElementById("rest-slider").value=S.restSecs;document.getElementById("rest-disp").textContent=S.restSecs+"s";renderFormula();updateDataSizeDisplay();}
 }
 
 // ─── DATA MIGRATION (run before anything else) ────────────────────────────────
@@ -1789,6 +1814,99 @@ function runMigrations(){
   // if(v < 2){ /* migrate something */ localStorage.setItem("bb_schema_version","2"); }
 }
 runMigrations();
+
+// ─── BACKUP & RESTORE ────────────────────────────────────────────────────────
+function exportData(){
+  const backup = {
+    version:  "1.0.0",
+    exported: new Date().toISOString(),
+    data: {
+      bb_history:    ld("bb_history",    []),
+      bb_plans:      ld("bb_plans",      []),
+      bb_exweights:  ld("bb_exweights",  {}),
+      bb_photos:     ld("bb_photos",     {}),
+      bb_schedule:   ld("bb_schedule",   {}),
+      bb_donedates:  ld("bb_donedates",  {}),
+      bb_scale:      ld("bb_scale",      2),
+      bb_rest:       ld("bb_rest",       90),
+    }
+  };
+  const json = JSON.stringify(backup, null, 2);
+  const blob = new Blob([json], {type:"application/json"});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  const date = new Date().toISOString().slice(0,10);
+  a.href     = url;
+  a.download = `baobells-backup-${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showBackupStatus("✓ Backup saved to your device", "var(--green)");
+}
+
+function importData(input){
+  const file = input.files[0];
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const backup = JSON.parse(e.target.result);
+      if(!backup.data) throw new Error("Invalid backup file");
+      // Confirm before overwriting
+      if(!confirm("This will replace your current data with the backup. Continue?")){
+        input.value = ""; return;
+      }
+      // Restore all keys
+      Object.entries(backup.data).forEach(([k,v]) => {
+        try{ localStorage.setItem(k, JSON.stringify(v)); }catch(err){}
+      });
+      // Reload state from localStorage
+      S.history    = ld("bb_history",   []);
+      S.plans      = ld("bb_plans",     []);
+      S.exWeights  = ld("bb_exweights", {});
+      S.photos     = ld("bb_photos",    {});
+      S.schedule   = ld("bb_schedule",  {});
+      S.doneDates  = ld("bb_donedates", {});
+      S.scale      = ld("bb_scale",     2);
+      S.restSecs   = ld("bb_rest",      90);
+      // Refresh UI
+      renderHome();
+      showBackupStatus("✓ Data restored from backup (" + (backup.exported||"").slice(0,10) + ")", "var(--green)");
+      // Update sliders
+      document.getElementById("scale-slider").value = S.scale;
+      document.getElementById("scale-disp").textContent = parseFloat(S.scale).toFixed(1)+"×";
+      document.getElementById("rest-slider").value = S.restSecs;
+      document.getElementById("rest-disp").textContent = S.restSecs+"s";
+      renderFormula();
+    } catch(err){
+      showBackupStatus("✗ Could not read backup: "+err.message, "var(--red)");
+    }
+    input.value = "";
+  };
+  reader.readAsText(file);
+}
+
+function showBackupStatus(msg, color){
+  const el = document.getElementById("backup-status");
+  if(!el) return;
+  el.textContent = msg;
+  el.style.color = color || "var(--green)";
+  setTimeout(()=>{ el.textContent=""; }, 5000);
+}
+
+function updateDataSizeDisplay(){
+  try{
+    let bytes = 0;
+    ["bb_history","bb_plans","bb_exweights","bb_photos","bb_schedule","bb_donedates"].forEach(k=>{
+      const v = localStorage.getItem(k)||"";
+      bytes += v.length * 2; // UTF-16
+    });
+    const kb = (bytes/1024).toFixed(1);
+    const el = document.getElementById("data-size-display");
+    if(el) el.textContent = kb < 1024 ? kb+"KB" : (bytes/1048576).toFixed(1)+"MB";
+  }catch(e){}
+}
 
 // ─── INIT ─────────────────────────────────────
 document.getElementById("scale-slider").value=S.scale;
