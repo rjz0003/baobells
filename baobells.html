@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Baobells">
-<meta name="theme-color" content="#f07820">
+<meta name="theme-color" content="#cea2fd">
 <meta name="description" content="RPE-based progressive overload workout tracker">
 <link rel="manifest" href="manifest.json">
 <!-- iOS home screen icons (generated inline via canvas on first load) -->
@@ -21,7 +21,7 @@
   --bg:#0a0a0a;--bg2:#111112;--bg3:#1a1a1b;--bg4:#222224;--bg5:#2a2a2e;
   --border:#2a2a2e;--border2:#3a3a40;
   --text:#f2f0ec;--muted:#90889a;--hint:#58565e;
-  --accent:#f07820;--accent2:#ff9a4a;--accentdim:rgba(240,120,32,0.13);--accentborder:rgba(240,120,32,0.38);
+  --accent:#cea2fd;--accent2:#ddbefe;--accentdim:rgba(206,162,253,0.13);--accentborder:rgba(206,162,253,0.38);
   --green:#3abf7e;--greendim:rgba(58,191,126,0.13);--greenborder:rgba(58,191,126,0.35);
   --amber:#e8c23a;--blue:#4a9ef5;--red:#f05050;
   --r:12px;--rm:8px;
@@ -42,8 +42,8 @@ body{color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;overflow:h
 .content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:14px 14px 90px;min-height:0}
 .content::-webkit-scrollbar{display:none}
 .nav{position:absolute;bottom:0;left:0;right:0;width:100%;background:var(--bg2);border-top:1px solid var(--border);display:flex;padding:6px 4px;padding-bottom:max(6px,env(safe-area-inset-bottom));z-index:100}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 2px;border:none;background:transparent;color:var(--hint);font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:.15s;font-family:'Barlow Condensed',sans-serif;border-radius:var(--rm)}
-.nav-btn i{font-size:21px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 1px;border:none;background:transparent;color:var(--hint);font-size:8px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:.15s;font-family:'Barlow Condensed',sans-serif;border-radius:var(--rm)}
+.nav-btn i{font-size:19px}
 .nav-btn.active{color:var(--accent)}
 
 /* ─── PAGES ──────────────────────────────── */
@@ -110,7 +110,7 @@ body{color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;overflow:h
 .day-dot{width:6px;height:6px;border-radius:50%;background:transparent}
 
 .today-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
-.today-card-banner{padding:12px 16px;background:linear-gradient(135deg,rgba(240,120,32,.18),rgba(240,120,32,.06));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.today-card-banner{padding:12px 16px;background:linear-gradient(135deg,rgba(206,162,253,.18),rgba(206,162,253,.06));border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .today-card-icon{width:40px;height:40px;border-radius:var(--rm);background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0}
 .today-card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text)}
 .today-card-sub{font-size:12px;color:var(--muted);margin-top:1px}
@@ -266,7 +266,7 @@ body{color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;overflow:h
 .plan-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:3px}
 .plan-meta{font-size:12px;color:var(--muted);margin-bottom:7px}
 .plan-tags{display:flex;gap:5px;flex-wrap:wrap}
-.fab{position:fixed;bottom:78px;right:16px;width:50px;height:50px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:24px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:200;box-shadow:0 4px 18px rgba(240,120,32,.42);transition:.15s}
+.fab{position:fixed;bottom:78px;right:16px;width:50px;height:50px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:24px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:200;box-shadow:0 4px 18px rgba(206,162,253,.42);transition:.15s}
 .fab:hover{filter:brightness(1.1);transform:scale(1.06)}
 
 /* builder */
@@ -334,6 +334,46 @@ input[type=file]{display:none}
 .hist-ex{font-size:14px;font-weight:500;color:var(--text)}
 .hist-meta{font-size:12px;color:var(--muted)}
 
+/* ─── NUTRITION ──────────────────────────── */
+.nut-date-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.nut-date-nav{width:32px;height:32px;border-radius:var(--rm);border:1px solid var(--border);background:var(--bg3);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.15s}
+.nut-date-nav:hover{color:var(--text);border-color:var(--border2)}
+.nut-date-label{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);letter-spacing:.04em}
+.nut-ring-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:16px}
+.nut-ring-svg{overflow:visible}
+.nut-macro-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.nut-macro-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;text-align:center}
+.nut-macro-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;line-height:1}
+.nut-macro-lbl{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.05em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif}
+.nut-macro-sub{font-size:10px;color:var(--hint);margin-top:1px}
+.nut-goal-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.nut-goal-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.nut-goal-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.nut-goal-row:last-child{margin-bottom:0}
+.nut-goal-lbl{font-size:13px;color:var(--muted);width:80px;flex-shrink:0}
+.nut-goal-input{flex:1;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rm);color:var(--text);font-size:15px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-align:center;outline:none;transition:.15s}
+.nut-goal-input:focus{border-color:var(--accent)}
+.nut-goal-unit{font-size:12px;color:var(--hint);width:28px;flex-shrink:0}
+.food-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.food-item:last-child{border-bottom:none}
+.food-item-name{flex:1;font-size:14px;font-weight:500;color:var(--text)}
+.food-item-cals{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.food-item-macros{font-size:11px;color:var(--muted)}
+.food-rm{background:none;border:none;color:var(--hint);cursor:pointer;font-size:16px;padding:2px;transition:.15s;flex-shrink:0}
+.food-rm:hover{color:var(--accent)}
+.add-food-form{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+.add-food-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px}
+.add-food-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.add-food-input{padding:9px 8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rm);color:var(--text);font-size:13px;font-family:'Barlow',sans-serif;text-align:center;outline:none;width:100%;transition:.15s}
+.add-food-input:focus{border-color:var(--accent)}
+.add-food-input::placeholder{color:var(--hint);font-size:12px}
+.add-food-input:first-child{text-align:left;padding-left:10px}
+.nut-bar-wrap{margin-bottom:6px}
+.nut-bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.04em}
+.nut-bar{height:6px;border-radius:3px;background:var(--border2);overflow:hidden}
+.nut-bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.nut-quick-btn{padding:7px 12px;border-radius:var(--rm);border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
+.nut-quick-btn:hover{border-color:var(--accent);color:var(--accent2)}
 /* ─── HISTORY TABS ───────────────────────── */
 .hist-tabs{display:flex;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:4px;margin-bottom:14px}
 .hist-tab{flex:1;padding:8px;border:none;background:transparent;border-radius:var(--rm);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:.15s}
@@ -444,10 +484,11 @@ input[type=file]{display:none}
     <div class="slabel" style="margin-bottom:10px">How weights progress</div>
     <div class="card">
       <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px">After each set you rate your RPE. The app automatically suggests your next set's weight — and remembers where you left off for next session.</div>
-      <div class="f-row"><div><div class="f-lbl">RPE 1–5 <span style="font-size:12px;color:var(--green)">Easy</span></div><div class="f-sub">Increase weight</div></div><div class="f-val" id="f-easy">+5.0%</div></div>
-      <div class="f-row"><div><div class="f-lbl">RPE 6–7 <span style="font-size:12px;color:var(--amber)">Target zone</span></div><div class="f-sub">Maintain weight</div></div><div class="f-val" style="color:var(--amber)">±0%</div></div>
-      <div class="f-row"><div><div class="f-lbl">RPE 8–9 <span style="font-size:12px;color:var(--accent2)">Hard</span></div><div class="f-sub">Slight decrease</div></div><div class="f-val" id="f-hard">−2.0%</div></div>
-      <div class="f-row"><div><div class="f-lbl">RPE 10 <span style="font-size:12px;color:var(--accent)">Max effort</span></div><div class="f-sub">Larger decrease</div></div><div class="f-val" id="f-max">−4.0%</div></div>
+      <div class="f-row"><div><div class="f-lbl">RPE 1–2 <span style="font-size:12px;color:var(--blue)">Way too easy</span></div><div class="f-sub">Add 20 lbs next set</div></div><div class="f-val" style="color:var(--blue)">+20lbs</div></div>
+      <div class="f-row"><div><div class="f-lbl">RPE 3–4 <span style="font-size:12px;color:var(--green)">Easy</span></div><div class="f-sub">Add 10 lbs next set</div></div><div class="f-val" style="color:var(--green)">+10lbs</div></div>
+      <div class="f-row"><div><div class="f-lbl">RPE 5–6 <span style="font-size:12px;color:var(--amber)">Moderate</span></div><div class="f-sub">Add 5 lbs next set</div></div><div class="f-val" style="color:var(--amber)">+5lbs</div></div>
+      <div class="f-row"><div><div class="f-lbl">RPE 7–9 <span style="font-size:12px;color:var(--accent2)">Target zone</span></div><div class="f-sub">Maintain weight</div></div><div class="f-val" style="color:var(--accent2)">±0lbs</div></div>
+      <div class="f-row"><div><div class="f-lbl">RPE 10 <span style="font-size:12px;color:var(--accent)">Max effort</span></div><div class="f-sub">Reduce 5 lbs next set</div></div><div class="f-val" style="color:var(--accent)">−5lbs</div></div>
     </div>
     <div class="slabel" style="margin-bottom:10px">Scale multiplier</div>
     <div class="card">
@@ -499,11 +540,68 @@ input[type=file]{display:none}
     </div>
   </div>
 
+  <!-- NUTRITION PAGE -->
+  <div class="page" id="page-nutrition">
+    <div class="nut-date-bar">
+      <button class="nut-date-nav" onclick="shiftNutDay(-1)"><i class="ti ti-chevron-left"></i></button>
+      <div class="nut-date-label" id="nut-date-label">TODAY</div>
+      <button class="nut-date-nav" onclick="shiftNutDay(1)"><i class="ti ti-chevron-right"></i></button>
+    </div>
+
+    <!-- Calorie ring -->
+    <div class="nut-ring-wrap" id="nut-ring-wrap"></div>
+
+    <!-- Macro bars -->
+    <div id="nut-macro-row"></div>
+
+    <!-- Add food form -->
+    <div class="add-food-form">
+      <div class="add-food-title">Add Food</div>
+      <!-- Quick add common foods -->
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px;scrollbar-width:none">
+        <button class="nut-quick-btn" onclick="quickAdd('Chicken Breast 100g',165,31,0,3.6)">Chicken</button>
+        <button class="nut-quick-btn" onclick="quickAdd('White Rice 1 cup',206,4,45,0.4)">Rice</button>
+        <button class="nut-quick-btn" onclick="quickAdd('Eggs x2',143,13,1,10)">2 Eggs</button>
+        <button class="nut-quick-btn" onclick="quickAdd('Protein Shake',150,25,5,3)">Protein</button>
+        <button class="nut-quick-btn" onclick="quickAdd('Banana',105,1,27,0.4)">Banana</button>
+        <button class="nut-quick-btn" onclick="quickAdd('Oats 1 cup',307,11,55,5)">Oats</button>
+        <button class="nut-quick-btn" onclick="quickAdd('Salmon 100g',208,20,0,13)">Salmon</button>
+        <button class="nut-quick-btn" onclick="quickAdd('Sweet Potato',103,2,24,0.1)">Sweet Potato</button>
+      </div>
+      <div class="add-food-grid">
+        <input class="add-food-input" id="food-name" placeholder="Food name" type="text">
+        <input class="add-food-input" id="food-cals" placeholder="Cal" type="number" inputmode="numeric">
+        <input class="add-food-input" id="food-protein" placeholder="Pro g" type="number" inputmode="decimal">
+        <input class="add-food-input" id="food-carbs" placeholder="Carb g" type="number" inputmode="decimal">
+      </div>
+      <div class="add-food-grid" style="grid-template-columns:2fr 1fr 1fr 1fr">
+        <input class="add-food-input" id="food-fat" placeholder="Fat g" type="number" inputmode="decimal">
+        <div></div><div></div>
+        <button onclick="addFoodEntry()" style="padding:9px;border-radius:var(--rm);border:none;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer">ADD</button>
+      </div>
+    </div>
+
+    <!-- Daily log -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:10px">
+      <div id="food-log-list"><div style="padding:20px;text-align:center;color:var(--hint);font-size:13px">No food logged yet</div></div>
+    </div>
+
+    <!-- Goals -->
+    <div class="nut-goal-card">
+      <div class="nut-goal-title">Daily Goals <button onclick="saveNutGoals()" style="background:var(--accent);border:none;color:#fff;padding:5px 14px;border-radius:var(--rm);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer">SAVE</button></div>
+      <div class="nut-goal-row"><span class="nut-goal-lbl">Calories</span><input class="nut-goal-input" id="goal-cals" type="number" inputmode="numeric" value="2500"><span class="nut-goal-unit">kcal</span></div>
+      <div class="nut-goal-row"><span class="nut-goal-lbl">Protein</span><input class="nut-goal-input" id="goal-protein" type="number" inputmode="numeric" value="180"><span class="nut-goal-unit">g</span></div>
+      <div class="nut-goal-row"><span class="nut-goal-lbl">Carbs</span><input class="nut-goal-input" id="goal-carbs" type="number" inputmode="numeric" value="300"><span class="nut-goal-unit">g</span></div>
+      <div class="nut-goal-row"><span class="nut-goal-lbl">Fat</span><input class="nut-goal-input" id="goal-fat" type="number" inputmode="numeric" value="70"><span class="nut-goal-unit">g</span></div>
+    </div>
+  </div>
+
 </div>
 
 <nav class="nav">
   <button class="nav-btn active" id="nav-home" onclick="showPage('home')"><i class="ti ti-home"></i>Home</button>
-  <button class="nav-btn" id="nav-workouts" onclick="showPage('workouts')"><i class="ti ti-layout-list"></i>Workouts</button>
+  <button class="nav-btn" id="nav-workouts" onclick="showPage('workouts')"><i class="ti ti-layout-list"></i>Plans</button>
+  <button class="nav-btn" id="nav-nutrition" onclick="showPage('nutrition')"><i class="ti ti-apple"></i>Nutrition</button>
   <button class="nav-btn" id="nav-library" onclick="showPage('library')"><i class="ti ti-photo"></i>Library</button>
   <button class="nav-btn" id="nav-history" onclick="showPage('history')"><i class="ti ti-history"></i>History</button>
 </nav>
@@ -834,38 +932,24 @@ function dateKey(d){return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
 
 // ── RPE / weight helpers ──────────────────────
 function calcNext(w, rpe, s, actualReps, targetReps){
-  const wt = parseFloat(w)||0, rp = parseInt(rpe)||0, sc = parseFloat(s)||2;
+  const wt = parseFloat(w)||0, rp = parseInt(rpe)||0;
   if(!wt || !rp) return null;
 
-  // ── Base RPE adjustment ──────────────────────────────────────────
-  // RPE 1-5  → too easy, increase weight
-  // RPE 6-7  → target zone, maintain
-  // RPE 8    → hard but manageable, tiny decrease
-  // RPE 9    → very hard, clear decrease
-  // RPE 10   → max effort, larger decrease
-  let f;
-  if      (rp <= 5) f = 1 + sc * 0.025;   // e.g. scale=2 → +5%
-  else if (rp === 6) f = 1 + sc * 0.005;  // slight increase
-  else if (rp === 7) f = 1.0;             // maintain
-  else if (rp === 8) f = 1 - sc * 0.015; // e.g. scale=2 → -3%
-  else if (rp === 9) f = 1 - sc * 0.030; // e.g. scale=2 → -6%
-  else               f = 1 - sc * 0.050; // RPE 10 → e.g. scale=2 → -10%
+  // ── Flat lb adjustment by RPE ────────────────────────────────────
+  // RPE 1–2  → way too easy  → +20 lbs
+  // RPE 3–4  → easy          → +10 lbs
+  // RPE 5–6  → moderate      → +5 lbs
+  // RPE 7–9  → target zone   → no change
+  // RPE 10   → max effort    → −5 lbs
+  let delta;
+  if      (rp <= 2) delta = 20;
+  else if (rp <= 4) delta = 10;
+  else if (rp <= 6) delta = 5;
+  else if (rp <= 9) delta = 0;
+  else              delta = -5;
 
-  // ── Rep completion modifier ──────────────────────────────────────
-  // If they did MORE reps than target → exercise was easier than RPE suggests → bump up more
-  // If they did FEWER reps than target → exercise was harder → pull back more
-  if(actualReps && targetReps && targetReps > 0){
-    const repRatio = actualReps / targetReps;
-    const repMod = (repRatio - 1) * 0.02 * sc;
-    f = f + repMod;
-  }
-
-  // Clamp: never go below 80% or above 115% of current weight in one step
-  f = Math.max(0.80, Math.min(1.15, f));
-
-  // Round to nearest 5lbs
-  const raw = wt * f;
-  return Math.round(raw / 5) * 5 || Math.round(raw * 2) / 2;
+  // Round result to nearest 5 lbs
+  return Math.round((wt + delta) / 5) * 5;
 }
 function rpeColor(r){
   if(!r)return"var(--hint)";
@@ -880,7 +964,7 @@ function rpeBg(r){
   if(r<=3)return"#4a9ef5";
   if(r<=5)return"#3abf7e";
   if(r<=7)return"#e8c23a";
-  if(r<=9)return"#ff9a4a";
+  if(r<=9)return"#ddbefe";
   return"#f05050";
 }
 
@@ -1775,13 +1859,16 @@ function buildProgressChart(rows){
 // ─── FORMULA ──────────────────────────────────
 function updateScale(v){S.scale=parseFloat(v);saveS();document.getElementById("scale-disp").textContent=parseFloat(v).toFixed(1)+"×";renderFormula();}
 function renderFormula(){
-  const s=S.scale;
-  document.getElementById("f-easy").textContent="+"+(s*2.5).toFixed(1)+"%";
-  document.getElementById("f-hard").textContent="−"+(s*1.0).toFixed(1)+"%";
-  document.getElementById("f-max").textContent="−"+(s*2.0).toFixed(1)+"%";
-  const cases=[["RPE 1–5","Easy",calcNext(100,5,s)+" lbs","var(--green)"],["RPE 6–7","Target","100.0 lbs","var(--amber)"],["RPE 8–9","Hard",calcNext(100,9,s)+" lbs","var(--accent2)"],["RPE 10","Max",calcNext(100,10,s)+" lbs","var(--accent)"]];
-  document.getElementById("f-preview").innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:10px">Starting at 100 lbs — suggested next set weight:</div>`+
-    cases.map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;${i<3?"border-bottom:1px solid var(--border)":""}"><span style="font-size:14px;color:var(--text)">${c[0]} <span style="font-size:12px;color:var(--muted)">${c[1]}</span></span><span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:${c[3]}">${c[2]}</span></div>`).join("");
+  const cases=[
+    ["RPE 1–2","Way too easy", calcNext(100,2)+" lbs","var(--blue)"],
+    ["RPE 3–4","Easy",         calcNext(100,4)+" lbs","var(--green)"],
+    ["RPE 5–6","Moderate",     calcNext(100,6)+" lbs","var(--amber)"],
+    ["RPE 7–9","Target zone",  calcNext(100,9)+" lbs","var(--accent2)"],
+    ["RPE 10", "Max effort",   calcNext(100,10)+" lbs","var(--accent)"]
+  ];
+  const prev = document.getElementById("f-preview");
+  if(prev) prev.innerHTML=`<div style="font-size:12px;color:var(--muted);margin-bottom:10px">Starting at 100 lbs — suggested next set weight:</div>`+
+    cases.map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;${i<4?"border-bottom:1px solid var(--border)":""}"><span style="font-size:14px;color:var(--text)">${c[0]} <span style="font-size:12px;color:var(--muted)">${c[1]}</span></span><span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:${c[3]}">${c[2]}</span></div>`).join("");
 }
 
 // ─── PAGE ROUTING ─────────────────────────────
@@ -1789,12 +1876,13 @@ function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   document.getElementById("page-"+id).classList.add("active");
-  const nm={home:"nav-home",workouts:"nav-workouts",library:"nav-library",history:"nav-history"};
+  const nm={home:"nav-home",workouts:"nav-workouts",nutrition:"nav-nutrition",library:"nav-library",history:"nav-history"};
   if(nm[id])document.getElementById(nm[id]).classList.add("active");
   document.getElementById("content").scrollTop=0;
   document.getElementById("fab").style.display=id==="workouts"?"flex":"none";
   if(id==="history")renderHistory();
   if(id==="library")renderLibrary();
+  if(id==="nutrition")renderNutrition();
   if(id==="workouts"){renderPlans();renderAI();}
   if(id==="formula"){document.getElementById("scale-slider").value=S.scale;document.getElementById("scale-disp").textContent=parseFloat(S.scale).toFixed(1)+"×";document.getElementById("rest-slider").value=S.restSecs;document.getElementById("rest-disp").textContent=S.restSecs+"s";renderFormula();updateDataSizeDisplay();}
 }
@@ -1815,6 +1903,161 @@ function runMigrations(){
 }
 runMigrations();
 
+// ─── NUTRITION ────────────────────────────────────────────────────────────────
+let _nutDayOffset = 0;
+
+function nutDayKey(offset){
+  const d = new Date();
+  d.setDate(d.getDate() + (offset||0));
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+
+function shiftNutDay(delta){
+  _nutDayOffset = Math.min(0, _nutDayOffset + delta); // can't go into future
+  renderNutrition();
+}
+
+function getNutData(dk){
+  return ld("bb_nut_"+dk, {entries:[]});
+}
+function saveNutData(dk, data){
+  sv("bb_nut_"+dk, data);
+}
+function getNutGoals(){
+  return ld("bb_nut_goals", {cals:2500, protein:180, carbs:300, fat:70});
+}
+
+function addFoodEntry(){
+  const name    = document.getElementById("food-name").value.trim();
+  const cals    = parseFloat(document.getElementById("food-cals").value)||0;
+  const protein = parseFloat(document.getElementById("food-protein").value)||0;
+  const carbs   = parseFloat(document.getElementById("food-carbs").value)||0;
+  const fat     = parseFloat(document.getElementById("food-fat").value)||0;
+  if(!name || !cals){ alert("Enter a food name and calories."); return; }
+  const dk   = nutDayKey(_nutDayOffset);
+  const data = getNutData(dk);
+  data.entries.push({id:Date.now(), name, cals, protein, carbs, fat});
+  saveNutData(dk, data);
+  // Clear inputs
+  ["food-name","food-cals","food-protein","food-carbs","food-fat"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value="";
+  });
+  renderNutrition();
+}
+
+function quickAdd(name, cals, protein, carbs, fat){
+  const dk   = nutDayKey(_nutDayOffset);
+  const data = getNutData(dk);
+  data.entries.push({id:Date.now(), name, cals, protein, carbs, fat});
+  saveNutData(dk, data);
+  renderNutrition();
+}
+
+function removeFoodEntry(dk, id){
+  const data = getNutData(dk);
+  data.entries = data.entries.filter(e => e.id !== id);
+  saveNutData(dk, data);
+  renderNutrition();
+}
+
+function saveNutGoals(){
+  const goals = {
+    cals:    parseFloat(document.getElementById("goal-cals").value)||2500,
+    protein: parseFloat(document.getElementById("goal-protein").value)||180,
+    carbs:   parseFloat(document.getElementById("goal-carbs").value)||300,
+    fat:     parseFloat(document.getElementById("goal-fat").value)||70
+  };
+  sv("bb_nut_goals", goals);
+  renderNutrition();
+  // Flash the save button
+  const btn = document.querySelector('#page-nutrition .nut-goal-title button');
+  if(btn){ btn.textContent="SAVED ✓"; setTimeout(()=>btn.textContent="SAVE",1500); }
+}
+
+function renderNutrition(){
+  const dk     = nutDayKey(_nutDayOffset);
+  const data   = getNutData(dk);
+  const goals  = getNutGoals();
+  const today  = nutDayKey(0);
+
+  // Load goals into inputs
+  document.getElementById("goal-cals").value    = goals.cals;
+  document.getElementById("goal-protein").value = goals.protein;
+  document.getElementById("goal-carbs").value   = goals.carbs;
+  document.getElementById("goal-fat").value     = goals.fat;
+
+  // Date label
+  const lbl = document.getElementById("nut-date-label");
+  if(lbl){
+    if(_nutDayOffset===0) lbl.textContent="TODAY";
+    else if(_nutDayOffset===-1) lbl.textContent="YESTERDAY";
+    else{
+      const d=new Date(); d.setDate(d.getDate()+_nutDayOffset);
+      lbl.textContent=d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}).toUpperCase();
+    }
+  }
+
+  // Totals
+  const totals = data.entries.reduce((a,e)=>({
+    cals:a.cals+(e.cals||0), protein:a.protein+(e.protein||0),
+    carbs:a.carbs+(e.carbs||0), fat:a.fat+(e.fat||0)
+  }), {cals:0,protein:0,carbs:0,fat:0});
+
+  // Calorie ring
+  const pct = Math.min(1, totals.cals / goals.cals);
+  const rem = Math.max(0, goals.cals - totals.cals);
+  const R=70, circ=2*Math.PI*R;
+  const ringColor = pct>=1 ? "var(--accent)" : pct>0.75 ? "var(--amber)" : "var(--green)";
+  const ringWrap = document.getElementById("nut-ring-wrap");
+  if(ringWrap) ringWrap.innerHTML = `
+    <svg class="nut-ring-svg" width="180" height="180" viewBox="0 0 180 180">
+      <circle cx="90" cy="90" r="${R}" fill="none" stroke="var(--border2)" stroke-width="10"/>
+      <circle cx="90" cy="90" r="${R}" fill="none" stroke="${ringColor}" stroke-width="10"
+        stroke-dasharray="${circ}" stroke-dashoffset="${(circ*(1-pct)).toFixed(2)}"
+        stroke-linecap="round" transform="rotate(-90 90 90)" style="transition:stroke-dashoffset .5s ease"/>
+      <text x="90" y="82" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="36" font-weight="700" fill="var(--text)">${Math.round(totals.cals)}</text>
+      <text x="90" y="100" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="13" fill="var(--muted)">of ${goals.cals} kcal</text>
+      <text x="90" y="120" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="12" fill="${rem>0?"var(--green)":"var(--accent)"}">${rem>0?rem+" remaining":"over by "+(totals.cals-goals.cals)}</text>
+    </svg>`;
+
+  // Macro bars
+  const macros = [
+    {label:"Protein", val:totals.protein, goal:goals.protein, unit:"g", color:"#4a9ef5"},
+    {label:"Carbs",   val:totals.carbs,   goal:goals.carbs,   unit:"g", color:"var(--amber)"},
+    {label:"Fat",     val:totals.fat,     goal:goals.fat,     unit:"g", color:"var(--accent2)"}
+  ];
+  const macroRow = document.getElementById("nut-macro-row");
+  if(macroRow) macroRow.innerHTML = `<div class="nut-macro-row">` +
+    macros.map(m=>`<div class="nut-macro-card">
+      <div class="nut-macro-val" style="color:${m.color}">${Math.round(m.val)}<span style="font-size:12px;font-weight:400;color:var(--hint)">${m.unit}</span></div>
+      <div class="nut-macro-lbl">${m.label}</div>
+      <div class="nut-macro-sub">of ${m.goal}${m.unit}</div>
+      <div style="height:4px;background:var(--border2);border-radius:2px;margin-top:6px;overflow:hidden">
+        <div style="height:100%;border-radius:2px;background:${m.color};width:${Math.min(100,(m.val/m.goal*100)).toFixed(1)}%;transition:width .4s"></div>
+      </div>
+    </div>`).join("") + `</div>`;
+
+  // Food log
+  const logEl = document.getElementById("food-log-list");
+  if(logEl){
+    if(!data.entries.length){
+      logEl.innerHTML=`<div style="padding:20px;text-align:center;color:var(--hint);font-size:13px">No food logged yet — add something above</div>`;
+    } else {
+      logEl.innerHTML = data.entries.map(e=>`
+        <div class="food-item">
+          <div style="flex:1;min-width:0">
+            <div class="food-item-name">${e.name}</div>
+            <div class="food-item-macros">P ${e.protein||0}g · C ${e.carbs||0}g · F ${e.fat||0}g</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div class="food-item-cals">${e.cals} <span style="font-size:11px;font-weight:400;color:var(--muted)">kcal</span></div>
+          </div>
+          <button class="food-rm" onclick="removeFoodEntry('${dk}',${e.id})"><i class="ti ti-x"></i></button>
+        </div>`).join("");
+    }
+  }
+}
+
 // ─── BACKUP & RESTORE ────────────────────────────────────────────────────────
 function exportData(){
   const backup = {
@@ -1829,6 +2072,7 @@ function exportData(){
       bb_donedates:  ld("bb_donedates",  {}),
       bb_scale:      ld("bb_scale",      2),
       bb_rest:       ld("bb_rest",       90),
+      bb_nut_goals:  ld("bb_nut_goals",  {}),
     }
   };
   const json = JSON.stringify(backup, null, 2);
@@ -1961,25 +2205,25 @@ function applyUpdate(){
     ctx.roundRect(0,0,512,512,96);
     ctx.fill();
     // Orange circle accent
-    ctx.fillStyle = "rgba(240,120,32,0.15)";
+    ctx.fillStyle = "rgba(206,162,253,0.15)";
     ctx.beginPath();
     ctx.arc(256,220,180,0,Math.PI*2);
     ctx.fill();
     // Barbell
-    ctx.strokeStyle = "#f07820";
+    ctx.strokeStyle = "#cea2fd";
     ctx.lineWidth = 28;
     ctx.lineCap = "round";
     // bar
     ctx.beginPath(); ctx.moveTo(120,256); ctx.lineTo(392,256); ctx.stroke();
     // left plates
-    ctx.strokeStyle = "#ff9a4a"; ctx.lineWidth = 44;
+    ctx.strokeStyle = "#ddbefe"; ctx.lineWidth = 44;
     ctx.beginPath(); ctx.moveTo(148,210); ctx.lineTo(148,302); ctx.stroke();
-    ctx.strokeStyle = "#f07820"; ctx.lineWidth = 44;
+    ctx.strokeStyle = "#cea2fd"; ctx.lineWidth = 44;
     ctx.beginPath(); ctx.moveTo(188,198); ctx.lineTo(188,314); ctx.stroke();
     // right plates
-    ctx.strokeStyle = "#ff9a4a"; ctx.lineWidth = 44;
+    ctx.strokeStyle = "#ddbefe"; ctx.lineWidth = 44;
     ctx.beginPath(); ctx.moveTo(364,210); ctx.lineTo(364,302); ctx.stroke();
-    ctx.strokeStyle = "#f07820"; ctx.lineWidth = 44;
+    ctx.strokeStyle = "#cea2fd"; ctx.lineWidth = 44;
     ctx.beginPath(); ctx.moveTo(324,198); ctx.lineTo(324,314); ctx.stroke();
     // Text: BAOBELLS
     ctx.fillStyle = "#f2f0ec";
