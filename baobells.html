@@ -374,6 +374,36 @@ input[type=file]{display:none}
 .nut-bar-fill{height:100%;border-radius:3px;transition:width .4s ease}
 .nut-quick-btn{padding:7px 12px;border-radius:var(--rm);border:1px solid var(--border);background:var(--bg3);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
 .nut-quick-btn:hover{border-color:var(--accent);color:var(--accent2)}
+/* ─── RANKS ──────────────────────────────── */
+.rank-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;border:1px solid}
+.rank-bronze{color:#cd7f32;background:rgba(205,127,50,.12);border-color:rgba(205,127,50,.35)}
+.rank-silver{color:#c0c0c0;background:rgba(192,192,192,.12);border-color:rgba(192,192,192,.35)}
+.rank-gold{color:#ffd700;background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.35)}
+.rank-platinum{color:#e2e0f0;background:rgba(226,224,240,.1);border-color:rgba(226,224,240,.3)}
+.rank-diamond{color:#b9f2ff;background:rgba(185,242,255,.1);border-color:rgba(185,242,255,.3)}
+.rank-emerald{color:#50c878;background:rgba(80,200,120,.12);border-color:rgba(80,200,120,.35)}
+.rank-tungsten{color:#a0b4c0;background:rgba(160,180,192,.1);border-color:rgba(160,180,192,.3)}
+.rank-radiant{color:#ff6fff;background:rgba(255,111,255,.12);border-color:rgba(255,111,255,.4);text-shadow:0 0 8px rgba(255,111,255,.5)}
+.rank-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.rank-ex-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.rank-ex-row:last-child{border-bottom:none}
+.rank-ex-name{font-size:14px;font-weight:500;color:var(--text)}
+.rank-ex-orm{font-size:12px;color:var(--muted);margin-top:1px}
+.rank-ex-right{text-align:right}
+.profile-setup{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.profile-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.profile-row:last-child{margin-bottom:0}
+.profile-lbl{font-size:13px;color:var(--muted);width:90px;flex-shrink:0}
+.profile-input{flex:1;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rm);color:var(--text);font-size:15px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-align:center;outline:none;transition:.15s}
+.profile-input:focus{border-color:var(--accent)}
+.gender-btns{display:flex;gap:8px;flex:1}
+.gender-btn{flex:1;padding:9px;border-radius:var(--rm);border:1px solid var(--border);background:var(--bg4);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.gender-btn.active{background:var(--accentdim);border-color:var(--accentborder);color:var(--accent)}
+.rank-overall{display:flex;flex-direction:column;align-items:center;padding:20px 0 12px}
+.rank-overall-badge{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;letter-spacing:.06em;margin-bottom:4px}
+.rank-overall-lbl{font-size:12px;color:var(--muted)}
+.rank-next-bar{margin-top:10px;width:100%}
+.rank-next-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700}
 /* ─── HISTORY TABS ───────────────────────── */
 .hist-tabs{display:flex;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:4px;margin-bottom:14px}
 .hist-tab{flex:1;padding:8px;border:none;background:transparent;border-radius:var(--rm);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:.15s}
@@ -460,8 +490,9 @@ input[type=file]{display:none}
   <!-- HISTORY -->
   <div class="page" id="page-history">
     <div class="hist-tabs">
-      <button class="hist-tab active" id="htab-log" onclick="switchHistTab('log')">Session Log</button>
+      <button class="hist-tab active" id="htab-log" onclick="switchHistTab('log')">Log</button>
       <button class="hist-tab" id="htab-progress" onclick="switchHistTab('progress')">Progress</button>
+      <button class="hist-tab" id="htab-ranks" onclick="switchHistTab('ranks')">Ranks</button>
     </div>
     <!-- Session Log tab -->
     <div id="hist-log-view">
@@ -476,6 +507,27 @@ input[type=file]{display:none}
     <div id="hist-progress-view" style="display:none">
       <div class="prog-ex-select" id="prog-ex-select"></div>
       <div id="prog-body"></div>
+    </div>
+    <!-- Ranks tab -->
+    <div id="hist-ranks-view" style="display:none">
+      <!-- Profile setup -->
+      <div class="slabel" style="margin-bottom:8px">Your Profile</div>
+      <div class="profile-setup">
+        <div class="profile-row">
+          <span class="profile-lbl">Gender</span>
+          <div class="gender-btns">
+            <button class="gender-btn" id="gbtn-male" onclick="setGender('male')">Male</button>
+            <button class="gender-btn" id="gbtn-female" onclick="setGender('female')">Female</button>
+          </div>
+        </div>
+        <div class="profile-row">
+          <span class="profile-lbl">Bodyweight</span>
+          <input class="profile-input" id="profile-bw" type="number" inputmode="decimal" placeholder="lbs">
+          <span style="font-size:13px;color:var(--hint);margin-left:6px">lbs</span>
+        </div>
+        <button onclick="saveProfile()" style="width:100%;margin-top:10px;padding:11px;border-radius:var(--rm);border:none;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">Save Profile</button>
+      </div>
+      <div id="ranks-body"></div>
     </div>
   </div>
 
@@ -1683,9 +1735,12 @@ function switchHistTab(tab){
   _histTab = tab;
   document.getElementById("htab-log").classList.toggle("active", tab==="log");
   document.getElementById("htab-progress").classList.toggle("active", tab==="progress");
+  document.getElementById("htab-ranks").classList.toggle("active", tab==="ranks");
   document.getElementById("hist-log-view").style.display = tab==="log" ? "" : "none";
   document.getElementById("hist-progress-view").style.display = tab==="progress" ? "" : "none";
+  document.getElementById("hist-ranks-view").style.display = tab==="ranks" ? "" : "none";
   if(tab==="progress") renderProgress();
+  if(tab==="ranks") renderRanks();
 }
 
 // Lander formula: 1RM = (100 * weight) / (101.3 - 2.67123 * reps)
@@ -2056,6 +2111,217 @@ function renderNutrition(){
         </div>`).join("");
     }
   }
+}
+
+// ─── RANK SYSTEM ──────────────────────────────────────────────────────────────
+const RANKS = [
+  {name:"Bronze",  cls:"rank-bronze",   icon:"🟤"},
+  {name:"Silver",  cls:"rank-silver",   icon:"⚪"},
+  {name:"Gold",    cls:"rank-gold",     icon:"🟡"},
+  {name:"Platinum",cls:"rank-platinum", icon:"💜"},
+  {name:"Diamond", cls:"rank-diamond",  icon:"💎"},
+  {name:"Emerald", cls:"rank-emerald",  icon:"💚"},
+  {name:"Tungsten",cls:"rank-tungsten", icon:"⚫"},
+  {name:"Radiant", cls:"rank-radiant",  icon:"✨"}
+];
+
+// Standards: [Bronze, Silver, Gold, Platinum, Diamond, Emerald, Tungsten, Radiant]
+// Values are e1RM ÷ bodyweight multipliers (except Pull-ups = reps)
+const STANDARDS = {
+  male: {
+    "Bench Press":           [0.5,  0.75, 1.0,  1.25, 1.5,  1.75, 2.0,  2.5 ],
+    "Inclined Bench":        [0.4,  0.6,  0.85, 1.05, 1.3,  1.5,  1.75, 2.2 ],
+    "Decline Bench":         [0.55, 0.8,  1.05, 1.3,  1.55, 1.8,  2.1,  2.6 ],
+    "Squat":                 [0.75, 1.0,  1.25, 1.5,  1.75, 2.0,  2.5,  3.0 ],
+    "Deadlift":              [1.0,  1.25, 1.5,  1.75, 2.0,  2.5,  3.0,  3.5 ],
+    "Romanian Deadlift":     [0.75, 1.0,  1.25, 1.5,  1.75, 2.0,  2.25, 2.75],
+    "Overhead Press":        [0.35, 0.5,  0.65, 0.8,  1.0,  1.2,  1.4,  1.75],
+    "Bentover Rows":         [0.5,  0.65, 0.8,  1.0,  1.2,  1.4,  1.6,  2.0 ],
+    "T-Bar Row":             [0.4,  0.55, 0.75, 0.95, 1.15, 1.35, 1.55, 1.95],
+    "Hip Thrust":            [0.75, 1.0,  1.25, 1.75, 2.25, 2.75, 3.25, 4.0 ],
+    "Bulgarian Split Squat": [0.35, 0.5,  0.75, 1.0,  1.25, 1.5,  1.75, 2.25],
+    "Pull-ups":              [1,    3,    5,    8,    12,   16,   20,   25  ], // reps
+    "Chinups":               [1,    3,    5,    8,    12,   16,   20,   25  ],
+    "Good Mornings":         [0.3,  0.5,  0.7,  0.9,  1.1,  1.3,  1.5,  1.9 ],
+    "_default":              [0.3,  0.5,  0.7,  0.9,  1.1,  1.3,  1.5,  2.0 ]
+  },
+  female: {
+    "Bench Press":           [0.35, 0.5,  0.65, 0.8,  1.0,  1.2,  1.4,  1.75],
+    "Inclined Bench":        [0.25, 0.4,  0.6,  0.8,  1.0,  1.2,  1.4,  1.75],
+    "Decline Bench":         [0.35, 0.55, 0.75, 0.95, 1.15, 1.35, 1.6,  2.0 ],
+    "Squat":                 [0.5,  0.75, 1.0,  1.25, 1.5,  1.75, 2.0,  2.5 ],
+    "Deadlift":              [0.75, 1.0,  1.25, 1.5,  1.75, 2.0,  2.5,  3.0 ],
+    "Romanian Deadlift":     [0.5,  0.75, 1.0,  1.25, 1.5,  1.75, 2.0,  2.5 ],
+    "Overhead Press":        [0.2,  0.35, 0.5,  0.65, 0.8,  1.0,  1.2,  1.5 ],
+    "Bentover Rows":         [0.35, 0.5,  0.65, 0.8,  1.0,  1.2,  1.4,  1.75],
+    "T-Bar Row":             [0.25, 0.4,  0.6,  0.8,  1.0,  1.2,  1.4,  1.75],
+    "Hip Thrust":            [1.0,  1.25, 1.5,  2.0,  2.5,  3.0,  3.5,  4.25],
+    "Bulgarian Split Squat": [0.25, 0.4,  0.6,  0.8,  1.0,  1.25, 1.5,  2.0 ],
+    "Pull-ups":              [1,    2,    4,    6,    9,    12,   16,   20  ],
+    "Chinups":               [1,    2,    4,    6,    9,    12,   16,   20  ],
+    "Good Mornings":         [0.2,  0.35, 0.55, 0.7,  0.9,  1.1,  1.3,  1.7 ],
+    "_default":              [0.2,  0.35, 0.55, 0.7,  0.9,  1.1,  1.3,  1.7 ]
+  }
+};
+
+const PULLUP_EX = new Set(["Pull-ups","Chinups","Neutral-grip Pull-up"]);
+
+function getProfile(){
+  return ld("bb_profile", {gender:"male", bw:0});
+}
+function saveProfile(){
+  const gender = document.getElementById("gbtn-male").classList.contains("active") ? "male" : "female";
+  const bw = parseFloat(document.getElementById("profile-bw").value)||0;
+  if(!bw){ alert("Enter your bodyweight."); return; }
+  sv("bb_profile", {gender, bw});
+  renderRanks();
+  // Flash button
+  const btn = document.querySelector("#page-ranks button:last-of-type");
+  if(btn){ const t=btn.textContent; btn.textContent="Saved ✓"; setTimeout(()=>btn.textContent=t,1500); }
+}
+function setGender(g){
+  document.getElementById("gbtn-male").classList.toggle("active", g==="male");
+  document.getElementById("gbtn-female").classList.toggle("active", g==="female");
+}
+
+function getRankForValue(exName, value, gender){
+  const standards = STANDARDS[gender]||STANDARDS.male;
+  const thresholds = standards[exName]||standards["_default"];
+  let rankIdx = -1;
+  for(let i=0; i<thresholds.length; i++){
+    if(value >= thresholds[i]) rankIdx = i;
+    else break;
+  }
+  return rankIdx; // -1 = unranked, 0=Bronze ... 7=Radiant
+}
+
+function getNextThreshold(exName, currentRankIdx, gender){
+  const standards = STANDARDS[gender]||STANDARDS.male;
+  const thresholds = standards[exName]||standards["_default"];
+  if(currentRankIdx >= thresholds.length-1) return null;
+  return thresholds[currentRankIdx+1];
+}
+
+// Get best e1RM (or reps for pull-ups) per exercise from history
+function getBestPerExercise(){
+  const bests = {}; // {exName: {orm, reps, weight, date}}
+  S.history.forEach(sess => {
+    sess.exercises.forEach(ex => {
+      (ex.sets||[]).forEach(s => {
+        const w = parseFloat(s.weight)||0;
+        const r = parseInt(s.reps)||0;
+        if(!w || !r) return;
+        if(PULLUP_EX.has(ex.name)){
+          // rank by reps
+          if(!bests[ex.name] || r > bests[ex.name].reps)
+            bests[ex.name] = {orm:r, reps:r, weight:w, date:sess.date, isPullup:true};
+        } else {
+          const orm = landerORM(w, r);
+          if(!bests[ex.name] || orm > bests[ex.name].orm)
+            bests[ex.name] = {orm, reps:r, weight:w, date:sess.date};
+        }
+      });
+    });
+  });
+  return bests;
+}
+
+function renderRanks(){
+  const profile = getProfile();
+  const bw      = profile.bw;
+  const gender  = profile.gender;
+
+  // Load profile inputs
+  document.getElementById("profile-bw").value = bw||"";
+  setGender(gender);
+
+  const body = document.getElementById("ranks-body");
+  if(!bw){
+    body.innerHTML=`<div class="empty"><i class="ti ti-trophy"></i><p class="empty-t">Set your profile above</p><p class="empty-s">Enter your bodyweight and gender to see your ranks</p></div>`;
+    return;
+  }
+
+  const bests = getBestPerExercise();
+  if(!Object.keys(bests).length){
+    body.innerHTML=`<div class="empty"><i class="ti ti-barbell"></i><p class="empty-t">No data yet</p><p class="empty-s">Complete some workouts to earn ranks</p></div>`;
+    return;
+  }
+
+  // Compute rank for each exercise
+  const ranked = Object.entries(bests).map(([name, data])=>{
+    const ratio = data.isPullup ? data.reps : data.orm / bw;
+    const rankIdx = getRankForValue(name, ratio, gender);
+    const nextThresh = getNextThreshold(name, rankIdx, gender);
+    const standards = STANDARDS[gender]||STANDARDS.male;
+    const thresholds = standards[name]||standards["_default"];
+    // progress to next rank
+    const curThresh  = rankIdx >= 0 ? thresholds[rankIdx] : 0;
+    const nextT      = nextThresh || thresholds[thresholds.length-1];
+    const pct        = nextThresh ? Math.min(1,(ratio-curThresh)/(nextT-curThresh)) : 1;
+    return {name, data, ratio, rankIdx, nextThresh, pct, thresholds};
+  }).sort((a,b) => b.rankIdx - a.rankIdx);
+
+  // Overall rank = median rank of logged exercises
+  const rankIndices = ranked.map(r=>r.rankIdx).filter(i=>i>=0);
+  const overallIdx  = rankIndices.length
+    ? rankIndices.sort((a,b)=>a-b)[Math.floor(rankIndices.length/2)]
+    : -1;
+  const overall = overallIdx >= 0 ? RANKS[overallIdx] : null;
+
+  let html = "";
+
+  // Overall rank card
+  if(overall){
+    const nextOverall = overallIdx < RANKS.length-1 ? RANKS[overallIdx+1] : null;
+    html += `<div class="rank-card" style="text-align:center;margin-bottom:14px">
+      <div style="font-size:12px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Overall Rank</div>
+      <div style="font-size:56px;margin-bottom:4px">${overall.icon}</div>
+      <div class="rank-overall-badge"><span class="${overall.cls}" style="font-size:28px;padding:6px 18px;border-radius:24px;display:inline-block">${overall.name.toUpperCase()}</span></div>
+      ${nextOverall?`<div style="margin-top:12px;font-size:12px;color:var(--muted)">Next: ${nextOverall.icon} ${nextOverall.name}</div>`:`<div style="margin-top:8px;font-size:12px;color:var(--radiant,#ff6fff)">✨ Maximum rank achieved</div>`}
+    </div>`;
+  }
+
+  // Per-exercise ranks
+  html += `<div class="slabel" style="margin-bottom:8px">Exercise Ranks</div>`;
+  html += `<div class="rank-card">`;
+  html += ranked.map(({name, data, ratio, rankIdx, nextThresh, pct, thresholds})=>{
+    const rank = rankIdx >= 0 ? RANKS[rankIdx] : null;
+    const nextRank = rankIdx < RANKS.length-1 ? RANKS[rankIdx+1] : null;
+    const isPullup = data.isPullup;
+    const displayVal = isPullup ? `${data.reps} reps` : `${data.orm}lbs e1RM`;
+    const ratioDisp  = isPullup ? `${data.reps} reps` : `${ratio.toFixed(2)}× BW`;
+    return `<div class="rank-ex-row">
+      <div>
+        <div class="rank-ex-name">${name}</div>
+        <div class="rank-ex-orm">${displayVal} · ${ratioDisp}</div>
+        ${nextThresh&&nextRank?`<div style="margin-top:5px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--hint);margin-bottom:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700">
+            <span>${rank?rank.name:"Unranked"}</span><span>${nextRank.name} @ ${isPullup?nextThresh+" reps":(nextThresh+"× BW = "+(nextThresh*bw).toFixed(0)+"lbs")}</span>
+          </div>
+          <div style="height:5px;background:var(--border2);border-radius:3px;overflow:hidden;width:180px">
+            <div style="height:100%;border-radius:3px;background:${rank?"var(--accent)":"var(--border2)"};width:${(pct*100).toFixed(1)}%;transition:width .4s"></div>
+          </div>
+        </div>`:""}
+      </div>
+      <div class="rank-ex-right">
+        ${rank
+          ? `<span class="rank-badge ${rank.cls}">${rank.icon} ${rank.name}</span>`
+          : `<span style="font-size:12px;color:var(--hint)">Unranked</span>`}
+      </div>
+    </div>`;
+  }).join("");
+  html += `</div>`;
+
+  // Rank legend
+  html += `<div class="rank-card" style="margin-bottom:10px">
+    <div class="slabel" style="margin-bottom:10px">Rank Guide (÷ bodyweight)</div>
+    ${RANKS.map(r=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span class="rank-badge ${r.cls}">${r.icon} ${r.name}</span>
+      <span style="font-size:12px;color:var(--muted)">${(STANDARDS[gender]?.["Bench Press"]||STANDARDS.male["Bench Press"])[RANKS.indexOf(r)]}× BW bench example</span>
+    </div>`).join("")}
+  </div>`;
+
+  body.innerHTML = html;
 }
 
 // ─── BACKUP & RESTORE ────────────────────────────────────────────────────────
