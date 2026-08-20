@@ -1,7 +1,7 @@
 // ─── BAOBELLS SERVICE WORKER ──────────────────────────────────────────────
 // Bump this version string every time you push an update.
 // This is what triggers the "update available" banner in the app.
-const VERSION = "1.0.2";
+const VERSION = "1.0.3";
 const CACHE   = "baobells-" + VERSION;
 
 // Files to cache for offline use
