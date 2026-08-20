@@ -464,16 +464,16 @@ input[type=file]{display:none}
 
   <!-- WORKOUTS -->
   <div class="page" id="page-workouts">
-    <div class="ai-panel">
-      <div class="ai-head">
-        <div class="ai-ico"><i class="ti ti-brain"></i></div>
-        <div><div class="ai-title">AI Workout Generator</div><div class="ai-sub">Tell me your goal and I'll build a plan</div></div>
+    <!-- Compact AI card -->
+    <div class="ai-panel" style="padding:12px 14px;cursor:pointer" onclick="openAISheet()">
+      <div class="ai-head" style="margin-bottom:0">
+        <div class="ai-ico"><i class="ti ti-sparkles"></i></div>
+        <div style="flex:1">
+          <div class="ai-title">Generate a Workout</div>
+          <div class="ai-sub">Tap to build a plan based on your goal</div>
+        </div>
+        <i class="ti ti-chevron-right" style="font-size:18px;color:var(--hint)"></i>
       </div>
-      <div class="slabel">Goal</div><div id="ai-goals"></div>
-      <div class="slabel" style="margin-top:10px">Time available</div><div id="ai-times"></div>
-      <div class="slabel" style="margin-top:10px">Equipment</div><div id="ai-equip"></div>
-      <button class="gen-btn" id="gen-btn" onclick="generateWorkout()"><i class="ti ti-sparkles"></i> Generate Workout</button>
-      <div class="ai-result" id="ai-result"></div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div class="slabel" style="margin-bottom:0">Saved Plans</div>
@@ -827,6 +827,30 @@ input[type=file]{display:none}
   </div>
 </div>
 <input type="file" id="file-input" accept="image/*">
+
+<!-- AI Generator Full-Screen Sheet -->
+<div class="overlay fullscreen" id="ai-sheet" onclick="if(event.target===this)closeAISheet()">
+  <div class="sheet" style="height:100%;max-height:100%;border-radius:0;border:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text)">Generate Workout</div>
+      <button onclick="closeAISheet()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch">
+      <div class="slabel" style="margin-bottom:8px">What's your goal?</div>
+      <div id="ai-goals"></div>
+      <div class="slabel" style="margin-top:14px;margin-bottom:8px">Time available</div>
+      <div id="ai-times"></div>
+      <div class="slabel" style="margin-top:14px;margin-bottom:8px">Equipment</div>
+      <div id="ai-equip"></div>
+      <div class="ai-result" id="ai-result" style="margin-top:12px"></div>
+    </div>
+    <div style="padding-top:12px;border-top:1px solid var(--border);flex-shrink:0">
+      <button class="gen-btn" id="gen-btn" onclick="generateWorkout()" style="margin-top:0">
+        <i class="ti ti-sparkles"></i> Generate Workout
+      </button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ── Exercise data ─────────────────────────────
@@ -1606,6 +1630,14 @@ const AI_OPTS={
   times:[{l:"30 minutes",v:"30"},{l:"45 minutes",v:"45"},{l:"60 minutes",v:"60"},{l:"75+ minutes",v:"75+"}],
   equip:[{l:"Full gym",v:"full gym"},{l:"Dumbbells only",v:"dumbbells only"},{l:"Barbells + rack",v:"barbells and rack"},{l:"Cables + machines",v:"cables and machines"}]
 };
+function openAISheet(){
+  renderAI();
+  document.getElementById("ai-sheet").classList.add("open");
+}
+function closeAISheet(){
+  document.getElementById("ai-sheet").classList.remove("open");
+}
+
 function renderAI(){
   document.getElementById("ai-goals").innerHTML=AI_OPTS.goals.map(o=>`<div class="ai-opt${S.aiSel.goal===o.v?" sel":""}" onclick="S.aiSel.goal='${o.v}';renderAI()"><div class="ai-opt-lbl">${o.l}</div><i class="ti ti-check ai-chk"></i></div>`).join("");
   document.getElementById("ai-times").innerHTML=AI_OPTS.times.map(o=>`<div class="ai-opt${S.aiSel.time===o.v?" sel":""}" onclick="S.aiSel.time='${o.v}';renderAI()"><div class="ai-opt-lbl">${o.l}</div><i class="ti ti-check ai-chk"></i></div>`).join("");
@@ -1667,6 +1699,7 @@ function generateWorkout(){
   setTimeout(()=>{
     const plan={name:planName,focus:focusMap[goal]||"General",duration:time,exercises:chosen,aiGenerated:true,created:Date.now()};
     S.plans.unshift(plan);sv("bb_plans",S.plans);renderPlans();
+    closeAISheet();
     res.textContent=`✓ "${plan.name}" saved!\n${chosen.length} exercises · ~${time} min\n\n`+chosen.map(e=>`• ${e.name} (${e.muscle}) — ${e.sets} sets × ${e.targetReps} reps`).join("\n");
     res.classList.add("show");
     btn.disabled=false;btn.innerHTML=`<i class="ti ti-sparkles"></i> Generate Workout`;
