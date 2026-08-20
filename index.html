@@ -561,36 +561,8 @@ input[type=file]{display:none}
     </div>
     <!-- Ranks tab -->
     <div id="hist-ranks-view" style="display:none">
-
-      <!-- Username + sync status -->
-      <div id="username-setup-area"></div>
-
-      <!-- Profile -->
-      <div class="slabel" style="margin-bottom:8px">Your Profile</div>
-      <div class="profile-setup">
-        <div class="profile-row">
-          <span class="profile-lbl">Gender</span>
-          <div class="gender-btns">
-            <button class="gender-btn" id="gbtn-male" onclick="setGender('male')">Male</button>
-            <button class="gender-btn" id="gbtn-female" onclick="setGender('female')">Female</button>
-          </div>
-        </div>
-        <div class="profile-row">
-          <span class="profile-lbl">Bodyweight</span>
-          <input class="profile-input" id="profile-bw" type="number" inputmode="decimal" placeholder="lbs">
-          <span style="font-size:13px;color:var(--hint);margin-left:6px">lbs</span>
-        </div>
-        <button onclick="saveProfile()" style="width:100%;margin-top:10px;padding:11px;border-radius:var(--rm);border:none;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">Save Profile</button>
-      </div>
-
-      <!-- View toggle: My Ranks / Compare -->
-      <div class="compare-toggle">
-        <button class="compare-btn active" id="view-mine-btn" onclick="setRankView('mine')">My Ranks</button>
-        <button class="compare-btn" id="view-compare-btn" onclick="setRankView('compare')">Compare</button>
-      </div>
-
-      <div id="ranks-body"></div>
-      <div id="compare-body" style="display:none"></div>
+      <!-- Everything rendered dynamically by renderRanks() -->
+      <div id="ranks-root"></div>
     </div>
   </div>
 
@@ -2213,20 +2185,17 @@ function renderNutrition(){
 
 // ─── RANK SYSTEM ──────────────────────────────────────────────────────────────
 const RANKS = [
-  {name:"Bronze",  cls:"rank-bronze",   icon:"🟤"},
-  {name:"Silver",  cls:"rank-silver",   icon:"⚪"},
-  {name:"Gold",    cls:"rank-gold",     icon:"🟡"},
-  {name:"Platinum",cls:"rank-platinum", icon:"💜"},
-  {name:"Diamond", cls:"rank-diamond",  icon:"💎"},
-  {name:"Emerald", cls:"rank-emerald",  icon:"💚"},
-  {name:"Tungsten",cls:"rank-tungsten", icon:"⚫"},
-  {name:"Radiant", cls:"rank-radiant",  icon:"✨"}
+  {name:"Bronze",  cls:"rank-bronze",  icon:"🟤"},
+  {name:"Silver",  cls:"rank-silver",  icon:"⚪"},
+  {name:"Gold",    cls:"rank-gold",    icon:"🟡"},
+  {name:"Platinum",cls:"rank-platinum",icon:"💜"},
+  {name:"Diamond", cls:"rank-diamond", icon:"💎"},
+  {name:"Emerald", cls:"rank-emerald", icon:"💚"},
+  {name:"Tungsten",cls:"rank-tungsten",icon:"⚫"},
+  {name:"Radiant", cls:"rank-radiant", icon:"✨"}
 ];
-
-// Standards: [Bronze, Silver, Gold, Platinum, Diamond, Emerald, Tungsten, Radiant]
-// Values are e1RM ÷ bodyweight multipliers (except Pull-ups = reps)
-const STANDARDS = {
-  male: {
+const STANDARDS={
+  male:{
     "Bench Press":           [0.5,  0.75, 1.0,  1.25, 1.5,  1.75, 2.0,  2.5 ],
     "Inclined Bench":        [0.4,  0.6,  0.85, 1.05, 1.3,  1.5,  1.75, 2.2 ],
     "Decline Bench":         [0.55, 0.8,  1.05, 1.3,  1.55, 1.8,  2.1,  2.6 ],
@@ -2238,12 +2207,12 @@ const STANDARDS = {
     "T-Bar Row":             [0.4,  0.55, 0.75, 0.95, 1.15, 1.35, 1.55, 1.95],
     "Hip Thrust":            [0.75, 1.0,  1.25, 1.75, 2.25, 2.75, 3.25, 4.0 ],
     "Bulgarian Split Squat": [0.35, 0.5,  0.75, 1.0,  1.25, 1.5,  1.75, 2.25],
-    "Pull-ups":              [1,    3,    5,    8,    12,   16,   20,   25  ], // reps
+    "Pull-ups":              [1,    3,    5,    8,    12,   16,   20,   25  ],
     "Chinups":               [1,    3,    5,    8,    12,   16,   20,   25  ],
     "Good Mornings":         [0.3,  0.5,  0.7,  0.9,  1.1,  1.3,  1.5,  1.9 ],
     "_default":              [0.3,  0.5,  0.7,  0.9,  1.1,  1.3,  1.5,  2.0 ]
   },
-  female: {
+  female:{
     "Bench Press":           [0.35, 0.5,  0.65, 0.8,  1.0,  1.2,  1.4,  1.75],
     "Inclined Bench":        [0.25, 0.4,  0.6,  0.8,  1.0,  1.2,  1.4,  1.75],
     "Decline Bench":         [0.35, 0.55, 0.75, 0.95, 1.15, 1.35, 1.6,  2.0 ],
@@ -2261,396 +2230,354 @@ const STANDARDS = {
     "_default":              [0.2,  0.35, 0.55, 0.7,  0.9,  1.1,  1.3,  1.7 ]
   }
 };
-
 const PULLUP_EX = new Set(["Pull-ups","Chinups","Neutral-grip Pull-up"]);
 
-function getProfile(){
-  return ld("bb_profile", {gender:"male", bw:0});
-}
-function saveProfile(){
-  const gender = document.getElementById("gbtn-male").classList.contains("active") ? "male" : "female";
-  const bw = parseFloat(document.getElementById("profile-bw").value)||0;
-  if(!bw){ alert("Enter your bodyweight."); return; }
-  sv("bb_profile", {gender, bw});
-  renderRanks();
-  // Sync updated profile to Firebase
-  setTimeout(syncRanksToFirebase, 300);
-}
-function setGender(g){
-  document.getElementById("gbtn-male").classList.toggle("active", g==="male");
-  document.getElementById("gbtn-female").classList.toggle("active", g==="female");
-}
+function getProfile(){ return ld("bb_profile",{gender:"male",bw:0,username:""}); }
 
-function getRankForValue(exName, value, gender){
-  const standards = STANDARDS[gender]||STANDARDS.male;
-  const thresholds = standards[exName]||standards["_default"];
-  let rankIdx = -1;
-  for(let i=0; i<thresholds.length; i++){
-    if(value >= thresholds[i]) rankIdx = i;
-    else break;
-  }
-  return rankIdx; // -1 = unranked, 0=Bronze ... 7=Radiant
+function getRankForValue(exName,value,gender){
+  const t=(STANDARDS[gender]||STANDARDS.male)[exName]||(STANDARDS[gender]||STANDARDS.male)["_default"];
+  let idx=-1;
+  for(let i=0;i<t.length;i++){ if(value>=t[i])idx=i; else break; }
+  return idx;
 }
-
-function getNextThreshold(exName, currentRankIdx, gender){
-  const standards = STANDARDS[gender]||STANDARDS.male;
-  const thresholds = standards[exName]||standards["_default"];
-  if(currentRankIdx >= thresholds.length-1) return null;
-  return thresholds[currentRankIdx+1];
+function getNextThreshold(exName,idx,gender){
+  const t=(STANDARDS[gender]||STANDARDS.male)[exName]||(STANDARDS[gender]||STANDARDS.male)["_default"];
+  return idx<t.length-1?t[idx+1]:null;
 }
-
-// Get best e1RM (or reps for pull-ups) per exercise from history
 function getBestPerExercise(){
-  const bests = {}; // {exName: {orm, reps, weight, date}}
-  S.history.forEach(sess => {
-    sess.exercises.forEach(ex => {
-      (ex.sets||[]).forEach(s => {
-        const w = parseFloat(s.weight)||0;
-        const r = parseInt(s.reps)||0;
-        if(!w || !r) return;
+  const bests={};
+  S.history.forEach(sess=>{
+    sess.exercises.forEach(ex=>{
+      (ex.sets||[]).forEach(s=>{
+        const w=parseFloat(s.weight)||0,r=parseInt(s.reps)||0;
+        if(!w||!r)return;
         if(PULLUP_EX.has(ex.name)){
-          // rank by reps
-          if(!bests[ex.name] || r > bests[ex.name].reps)
-            bests[ex.name] = {orm:r, reps:r, weight:w, date:sess.date, isPullup:true};
+          if(!bests[ex.name]||r>bests[ex.name].reps) bests[ex.name]={orm:r,reps:r,weight:w,date:sess.date,isPullup:true};
         } else {
-          const orm = landerORM(w, r);
-          if(!bests[ex.name] || orm > bests[ex.name].orm)
-            bests[ex.name] = {orm, reps:r, weight:w, date:sess.date};
+          const orm=landerORM(w,r);
+          if(!bests[ex.name]||orm>bests[ex.name].orm) bests[ex.name]={orm,reps:r,weight:w,date:sess.date};
         }
       });
     });
   });
   return bests;
 }
-
-function renderRanks(){
-  const profile = getProfile();
-  const bw      = profile.bw;
-  const gender  = profile.gender;
-
-  // Show username area
-  renderUsernameArea();
-
-  // Load profile inputs
-  document.getElementById("profile-bw").value = bw||"";
-  setGender(gender);
-
-  const body = document.getElementById("ranks-body");
-  if(!bw){
-    body.innerHTML=`<div class="empty"><i class="ti ti-trophy"></i><p class="empty-t">Set your profile above</p><p class="empty-s">Enter your bodyweight and gender to see your ranks</p></div>`;
-    return;
-  }
-
-  const bests = getBestPerExercise();
-  if(!Object.keys(bests).length){
-    body.innerHTML=`<div class="empty"><i class="ti ti-barbell"></i><p class="empty-t">No data yet</p><p class="empty-s">Complete some workouts to earn ranks</p></div>`;
-    return;
-  }
-
-  // Compute rank for each exercise
-  const ranked = Object.entries(bests).map(([name, data])=>{
-    const ratio = data.isPullup ? data.reps : data.orm / bw;
-    const rankIdx = getRankForValue(name, ratio, gender);
-    const nextThresh = getNextThreshold(name, rankIdx, gender);
-    const standards = STANDARDS[gender]||STANDARDS.male;
-    const thresholds = standards[name]||standards["_default"];
-    // progress to next rank
-    const curThresh  = rankIdx >= 0 ? thresholds[rankIdx] : 0;
-    const nextT      = nextThresh || thresholds[thresholds.length-1];
-    const pct        = nextThresh ? Math.min(1,(ratio-curThresh)/(nextT-curThresh)) : 1;
-    return {name, data, ratio, rankIdx, nextThresh, pct, thresholds};
-  }).sort((a,b) => b.rankIdx - a.rankIdx);
-
-  // Overall rank = median rank of logged exercises
-  const rankIndices = ranked.map(r=>r.rankIdx).filter(i=>i>=0);
-  const overallIdx  = rankIndices.length
-    ? rankIndices.sort((a,b)=>a-b)[Math.floor(rankIndices.length/2)]
-    : -1;
-  const overall = overallIdx >= 0 ? RANKS[overallIdx] : null;
-
-  let html = "";
-
-  // Overall rank card
-  if(overall){
-    const nextOverall = overallIdx < RANKS.length-1 ? RANKS[overallIdx+1] : null;
-    html += `<div class="rank-card" style="text-align:center;margin-bottom:14px">
-      <div style="font-size:12px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Overall Rank</div>
-      <div style="font-size:56px;margin-bottom:4px">${overall.icon}</div>
-      <div class="rank-overall-badge"><span class="${overall.cls}" style="font-size:28px;padding:6px 18px;border-radius:24px;display:inline-block">${overall.name.toUpperCase()}</span></div>
-      ${nextOverall?`<div style="margin-top:12px;font-size:12px;color:var(--muted)">Next: ${nextOverall.icon} ${nextOverall.name}</div>`:`<div style="margin-top:8px;font-size:12px;color:var(--radiant,#ff6fff)">✨ Maximum rank achieved</div>`}
-    </div>`;
-  }
-
-  // Per-exercise ranks
-  html += `<div class="slabel" style="margin-bottom:8px">Exercise Ranks</div>`;
-  html += `<div class="rank-card">`;
-  html += ranked.map(({name, data, ratio, rankIdx, nextThresh, pct, thresholds})=>{
-    const rank = rankIdx >= 0 ? RANKS[rankIdx] : null;
-    const nextRank = rankIdx < RANKS.length-1 ? RANKS[rankIdx+1] : null;
-    const isPullup = data.isPullup;
-    const displayVal = isPullup ? `${data.reps} reps` : `${data.orm}lbs e1RM`;
-    const ratioDisp  = isPullup ? `${data.reps} reps` : `${ratio.toFixed(2)}× BW`;
-    return `<div class="rank-ex-row">
-      <div>
-        <div class="rank-ex-name">${name}</div>
-        <div class="rank-ex-orm">${displayVal} · ${ratioDisp}</div>
-        ${nextThresh&&nextRank?`<div style="margin-top:5px">
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--hint);margin-bottom:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700">
-            <span>${rank?rank.name:"Unranked"}</span><span>${nextRank.name} @ ${isPullup?nextThresh+" reps":(nextThresh+"× BW = "+(nextThresh*bw).toFixed(0)+"lbs")}</span>
-          </div>
-          <div style="height:5px;background:var(--border2);border-radius:3px;overflow:hidden;width:180px">
-            <div style="height:100%;border-radius:3px;background:${rank?"var(--accent)":"var(--border2)"};width:${(pct*100).toFixed(1)}%;transition:width .4s"></div>
-          </div>
-        </div>`:""}
-      </div>
-      <div class="rank-ex-right">
-        ${rank
-          ? `<span class="rank-badge ${rank.cls}">${rank.icon} ${rank.name}</span>`
-          : `<span style="font-size:12px;color:var(--hint)">Unranked</span>`}
-      </div>
-    </div>`;
-  }).join("");
-  html += `</div>`;
-
-  // Rank legend
-  html += `<div class="rank-card" style="margin-bottom:10px">
-    <div class="slabel" style="margin-bottom:10px">Rank Guide (÷ bodyweight)</div>
-    ${RANKS.map(r=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
-      <span class="rank-badge ${r.cls}">${r.icon} ${r.name}</span>
-      <span style="font-size:12px;color:var(--muted)">${(STANDARDS[gender]?.["Bench Press"]||STANDARDS.male["Bench Press"])[RANKS.indexOf(r)]}× BW bench example</span>
-    </div>`).join("")}
-  </div>`;
-
-  body.innerHTML = html;
+function computeOverallIdx(exRankMap){
+  const idxs=Object.values(exRankMap).filter(i=>i>=0);
+  if(!idxs.length)return -1;
+  return idxs.sort((a,b)=>a-b)[Math.floor(idxs.length/2)];
 }
 
-// ─── FIREBASE SYNC ────────────────────────────────────────────────────────────
-const FB_CONFIGURED = !document.getElementById("firebase-module")?.textContent.includes("PASTE_YOUR_API_KEY_HERE");
+// ── Main render — everything in one function ────────────────────────────────
+function renderRanks(){
+  const root=document.getElementById("ranks-root");
+  if(!root)return;
+  const profile=getProfile();
 
-function getUsername(){ return ld("bb_username",""); }
-function saveUsername(name){ sv("bb_username", name.trim()); }
+  // ── STEP 1: Name not set yet — show first-time setup ──────────────────────
+  if(!profile.username){
+    root.innerHTML=`
+      <div class="username-setup">
+        <div style="font-size:32px;margin-bottom:8px">🏆</div>
+        <div class="username-title">Set up your rank profile</div>
+        <div class="username-sub">Pick a name so your partner can see your ranks in the Compare tab. Each phone needs a different name.</div>
+        <input class="username-input" id="rk-username" placeholder="Your name (e.g. Jordan)" type="text" maxlength="20">
+        <div class="slabel" style="margin-bottom:8px;margin-top:14px">Gender</div>
+        <div class="gender-btns" style="margin-bottom:12px">
+          <button class="gender-btn active" id="gbtn-male" onclick="setGender('male')">Male</button>
+          <button class="gender-btn" id="gbtn-female" onclick="setGender('female')">Female</button>
+        </div>
+        <div class="slabel" style="margin-bottom:8px">Bodyweight</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <input class="username-input" id="rk-bw" type="number" inputmode="decimal" placeholder="lbs" style="margin-bottom:0">
+          <span style="font-size:14px;color:var(--hint);flex-shrink:0">lbs</span>
+        </div>
+        <button onclick="saveProfileFull()" style="width:100%;padding:14px;border-radius:var(--rm);border:none;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">
+          Save & View My Ranks
+        </button>
+      </div>`;
+    return;
+  }
 
-let _rankView = "mine";
-let _partnerData = null;
-let _partnerListener = null;
+  // ── STEP 2: Profile set — show full ranks UI ───────────────────────────────
+  const bw=profile.bw, gender=profile.gender, username=profile.username;
+  const bests=getBestPerExercise();
+  const exRankMap={};
+  const rankedList=Object.entries(bests).map(([name,data])=>{
+    const ratio=data.isPullup?data.reps:data.orm/bw;
+    const idx=getRankForValue(name,ratio,gender);
+    exRankMap[name]=idx;
+    const nextT=getNextThreshold(name,idx,gender);
+    const t=(STANDARDS[gender]||STANDARDS.male)[name]||(STANDARDS[gender]||STANDARDS.male)["_default"];
+    const curT=idx>=0?t[idx]:0;
+    const pct=nextT?Math.min(1,(ratio-curT)/(nextT-curT)):1;
+    return{name,data,ratio,idx,nextT,pct};
+  }).sort((a,b)=>b.idx-a.idx);
+
+  const overallIdx=computeOverallIdx(exRankMap);
+  const overall=overallIdx>=0?RANKS[overallIdx]:null;
+  const isFB = typeof FB_CONFIGURED !== 'undefined' && FB_CONFIGURED && window.FB_READY;
+
+  root.innerHTML=`
+    <!-- Header: name + edit + sync -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text)">${username}</div>
+        <div style="font-size:11px;color:${isFB?"var(--green)":"var(--hint)"}">
+          ${isFB?"● Connected to Firebase":"● Firebase not connected"}
+        </div>
+      </div>
+      <button onclick="editProfile()" style="background:none;border:1px solid var(--border);border-radius:var(--rm);color:var(--muted);padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700">Edit Profile</button>
+    </div>
+
+    <!-- Overall rank -->
+    ${overall?`<div class="rank-card" style="text-align:center;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--hint);letter-spacing:.1em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:6px">Overall Rank</div>
+      <div style="font-size:52px;margin-bottom:6px">${overall.icon}</div>
+      <span class="rank-badge ${overall.cls}" style="font-size:18px;padding:6px 20px;border-radius:24px">${overall.name.toUpperCase()}</span>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px">${gender==="male"?"♂":"♀"} · ${bw}lbs bodyweight</div>
+    </div>`:`<div class="rank-card" style="text-align:center;margin-bottom:12px;padding:20px">
+      <div style="font-size:13px;color:var(--muted)">Complete some workouts to earn your first rank!</div>
+    </div>`}
+
+    <!-- Compare toggle -->
+    <div class="compare-toggle" id="view-toggle">
+      <button class="compare-btn active" id="view-mine-btn" onclick="setRankView('mine')">My Ranks</button>
+      <button class="compare-btn" id="view-compare-btn" onclick="setRankView('compare')">Compare</button>
+    </div>
+
+    <!-- My ranks list -->
+    <div id="ranks-body">
+      ${rankedList.length?`<div class="rank-card">`+rankedList.map(({name,data,ratio,idx,nextT,pct})=>{
+        const rank=idx>=0?RANKS[idx]:null;
+        const nextRank=idx<RANKS.length-1?RANKS[idx+1]:null;
+        const isPullup=data.isPullup;
+        const valStr=isPullup?`${data.reps} reps`:`${data.orm}lbs e1RM`;
+        const ratioStr=isPullup?`${data.reps} reps`:`${ratio.toFixed(2)}× BW`;
+        return`<div class="rank-ex-row">
+          <div style="flex:1;min-width:0">
+            <div class="rank-ex-name">${name}</div>
+            <div class="rank-ex-orm">${valStr} · ${ratioStr}</div>
+            ${nextT&&nextRank?`<div style="margin-top:5px">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--hint);margin-bottom:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700">
+                <span>${rank?rank.name:"Unranked"}</span>
+                <span>→ ${nextRank.name}: ${isPullup?nextT+" reps":(nextT+"×BW = "+(nextT*bw).toFixed(0)+"lbs")}</span>
+              </div>
+              <div style="height:5px;background:var(--border2);border-radius:3px;overflow:hidden">
+                <div style="height:100%;border-radius:3px;background:${rank?"var(--accent)":"var(--border2)"};width:${(pct*100).toFixed(1)}%"></div>
+              </div>
+            </div>`:""}
+          </div>
+          <div style="flex-shrink:0;margin-left:10px">
+            ${rank?`<span class="rank-badge ${rank.cls}">${rank.icon} ${rank.name}</span>`:`<span style="font-size:12px;color:var(--hint)">Unranked</span>`}
+          </div>
+        </div>`;
+      }).join("")+`</div>`
+      :`<div class="empty"><i class="ti ti-barbell"></i><p class="empty-t">No workouts yet</p><p class="empty-s">Finish a workout to earn ranks</p></div>`}
+    </div>
+
+    <!-- Compare view (hidden by default) -->
+    <div id="compare-body" style="display:none">
+      <div id="compare-inner"></div>
+    </div>
+
+    <!-- Edit profile panel (hidden) -->
+    <div id="edit-profile-panel" style="display:none;margin-top:12px">
+      <div class="rank-card">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px">Edit Profile</div>
+        <div class="profile-row" style="margin-bottom:10px">
+          <span class="profile-lbl">Name</span>
+          <input class="profile-input" id="edit-username" type="text" maxlength="20" value="${username}">
+        </div>
+        <div class="profile-row" style="margin-bottom:10px">
+          <span class="profile-lbl">Gender</span>
+          <div class="gender-btns">
+            <button class="gender-btn${gender==="male"?" active":""}" id="gbtn-male" onclick="setGender('male')">Male</button>
+            <button class="gender-btn${gender==="female"?" active":""}" id="gbtn-female" onclick="setGender('female')">Female</button>
+          </div>
+        </div>
+        <div class="profile-row" style="margin-bottom:12px">
+          <span class="profile-lbl">Bodyweight</span>
+          <input class="profile-input" id="edit-bw" type="number" inputmode="decimal" value="${bw}">
+          <span style="font-size:13px;color:var(--hint);margin-left:6px">lbs</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="document.getElementById('edit-profile-panel').style.display='none'" style="flex:1;padding:11px;border-radius:var(--rm);border:1px solid var(--border);background:var(--bg4);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer">Cancel</button>
+          <button onclick="saveProfileEdit()" style="flex:2;padding:11px;border-radius:var(--rm);border:none;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.04em;text-transform:uppercase">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Start Firebase listener
+  if(isFB){ syncRanksToFirebase(); listenForPartner(); }
+}
+
+// ── Profile save functions ─────────────────────────────────────────────────
+function saveProfileFull(){
+  const username=(document.getElementById("rk-username")?.value||"").trim();
+  const bw=parseFloat(document.getElementById("rk-bw")?.value)||0;
+  const gender=document.getElementById("gbtn-male")?.classList.contains("active")?"male":"female";
+  if(!username){ alert("Enter your name."); return; }
+  if(!bw){ alert("Enter your bodyweight."); return; }
+  sv("bb_profile",{username,gender,bw});
+  renderRanks();
+}
+function editProfile(){
+  const p=document.getElementById("edit-profile-panel");
+  if(p) p.style.display=p.style.display==="none"?"":"none";
+}
+function saveProfileEdit(){
+  const username=(document.getElementById("edit-username")?.value||"").trim();
+  const bw=parseFloat(document.getElementById("edit-bw")?.value)||0;
+  const gender=document.getElementById("gbtn-male")?.classList.contains("active")?"male":"female";
+  if(!username){ alert("Enter a name."); return; }
+  if(!bw){ alert("Enter your bodyweight."); return; }
+  sv("bb_profile",{username,gender,bw});
+  renderRanks();
+  setTimeout(syncRanksToFirebase,300);
+}
+// Keep old saveProfile for backward compat
+function saveProfile(){ saveProfileEdit(); }
+function setGender(g){
+  document.getElementById("gbtn-male")?.classList.toggle("active",g==="male");
+  document.getElementById("gbtn-female")?.classList.toggle("active",g==="female");
+}
 
 function setRankView(view){
-  _rankView = view;
-  document.getElementById("view-mine-btn").classList.toggle("active", view==="mine");
-  document.getElementById("view-compare-btn").classList.toggle("active", view==="compare");
-  document.getElementById("ranks-body").style.display = view==="mine" ? "" : "none";
-  document.getElementById("compare-body").style.display = view==="compare" ? "" : "none";
+  document.getElementById("view-mine-btn")?.classList.toggle("active",view==="mine");
+  document.getElementById("view-compare-btn")?.classList.toggle("active",view==="compare");
+  const myDiv=document.getElementById("ranks-body");
+  const cmpDiv=document.getElementById("compare-body");
+  if(myDiv) myDiv.style.display=view==="mine"?"":"none";
+  if(cmpDiv) cmpDiv.style.display=view==="compare"?"":"none";
   if(view==="compare") renderCompare();
 }
 
-// Build the rank payload to push to Firebase
+// ── Firebase sync ─────────────────────────────────────────────────────────
+const FB_CONFIGURED = typeof window !== "undefined" &&
+  document.getElementById("firebase-module") &&
+  !document.getElementById("firebase-module").textContent.includes("PASTE_YOUR_API_KEY_HERE");
+
+let _partnerData=null, _partnerListener=null;
+
 function buildRankPayload(){
-  const profile = getProfile();
-  const bw      = profile.bw;
-  const gender  = profile.gender;
-  const bests   = getBestPerExercise();
-  const exercises = {};
-  Object.entries(bests).forEach(([name, data])=>{
-    const ratio    = data.isPullup ? data.reps : data.orm / bw;
-    const rankIdx  = getRankForValue(name, ratio, gender);
-    exercises[name] = {
-      orm:      data.isPullup ? data.reps : data.orm,
-      weight:   data.weight,
-      reps:     data.reps,
-      rankIdx,
-      rankName: rankIdx >= 0 ? RANKS[rankIdx].name : "Unranked",
-      isPullup: data.isPullup || false
-    };
+  const profile=getProfile();
+  const bw=profile.bw, gender=profile.gender;
+  const bests=getBestPerExercise();
+  const exercises={};
+  Object.entries(bests).forEach(([name,data])=>{
+    const ratio=data.isPullup?data.reps:data.orm/bw;
+    const idx=getRankForValue(name,ratio,gender);
+    exercises[name]={orm:data.isPullup?data.reps:data.orm,reps:data.reps,rankIdx:idx,rankName:idx>=0?RANKS[idx].name:"Unranked",isPullup:data.isPullup||false};
   });
-  const rankIndices = Object.values(exercises).map(e=>e.rankIdx).filter(i=>i>=0);
-  const overallIdx  = rankIndices.length
-    ? rankIndices.sort((a,b)=>a-b)[Math.floor(rankIndices.length/2)]
-    : -1;
-  return {
-    username:    getUsername(),
-    gender:      gender,
-    bw:          bw,
-    overallIdx,
-    overallName: overallIdx >= 0 ? RANKS[overallIdx].name : "Unranked",
-    exercises,
-    updatedAt:   Date.now()
-  };
+  const overallIdx=computeOverallIdx(Object.fromEntries(Object.entries(exercises).map(([n,e])=>[n,e.rankIdx])));
+  return{username:profile.username,gender,bw,overallIdx,overallName:overallIdx>=0?RANKS[overallIdx].name:"Unranked",exercises,updatedAt:Date.now()};
 }
 
-// Push my rank data to Firebase
 function syncRanksToFirebase(){
-  const username = getUsername();
-  if(!username || !FB_CONFIGURED || !window.FB_READY) return;
-  const payload = buildRankPayload();
-  const dbRef = window.FB_REF(window.FB_DB, "ranks/" + username.toLowerCase());
-  window.FB_SET(dbRef, payload).then(()=>{
-    updateSyncStatus("online", "Synced");
-  }).catch(e=>{
-    updateSyncStatus("offline", "Sync failed");
-    console.warn("Firebase sync error:", e);
-  });
+  const profile=getProfile();
+  if(!profile.username||!FB_CONFIGURED||!window.FB_READY)return;
+  const payload=buildRankPayload();
+  const r=window.FB_REF(window.FB_DB,"ranks/"+profile.username.toLowerCase().replace(/\s+/g,"_"));
+  window.FB_SET(r,payload).then(()=>console.log("Ranks synced")).catch(e=>console.warn("Sync error:",e));
 }
 
-// Listen for partner's rank changes in real-time
 function listenForPartner(){
-  const username = getUsername();
-  if(!username || !FB_CONFIGURED || !window.FB_READY) return;
-  // Stop any existing listener
-  if(_partnerListener){ _partnerListener(); _partnerListener=null; }
-  // Get all users, find ones that aren't me
-  const dbRef = window.FB_REF(window.FB_DB, "ranks");
-  _partnerListener = window.FB_ON(dbRef, (snapshot)=>{
-    const all = snapshot.val()||{};
-    const me  = username.toLowerCase();
-    const others = Object.entries(all).filter(([k])=> k !== me);
-    if(others.length > 0){
-      // Take the first other user (for 2-person app this is always the partner)
-      _partnerData = others[0][1];
-      // If compare view is open, refresh it
-      if(_rankView === "compare") renderCompare();
+  const profile=getProfile();
+  if(!profile.username||!FB_CONFIGURED||!window.FB_READY)return;
+  if(_partnerListener){_partnerListener();_partnerListener=null;}
+  const me=profile.username.toLowerCase().replace(/\s+/g,"_");
+  const r=window.FB_REF(window.FB_DB,"ranks");
+  _partnerListener=window.FB_ON(r,(snap)=>{
+    const all=snap.val()||{};
+    const others=Object.entries(all).filter(([k])=>k!==me);
+    if(others.length){
+      _partnerData=others[0][1];
+      if(document.getElementById("compare-body")?.style.display!=="none") renderCompare();
     }
   });
 }
 
-function updateSyncStatus(state, msg){
-  const el = document.getElementById("sync-status-text");
-  const dot = document.getElementById("sync-dot");
-  if(el)  el.textContent = msg;
-  if(dot){ dot.className = "sync-dot"; dot.classList.add(state==="online"?"online":state==="syncing"?"syncing":""); }
-}
-
-// Render username setup + sync status
-function renderUsernameArea(){
-  const username = getUsername();
-  const d = document.getElementById("username-setup-area");
-  if(!d) return;
-  if(!username){
-    d.innerHTML = `
-      <div class="username-setup">
-        <div class="username-title">Set your name</div>
-        <div class="username-sub">Pick a name so your partner can see your ranks. Just needs to be different from theirs.</div>
-        <input class="username-input" id="username-field" placeholder="Your name (e.g. Jordan)" type="text" maxlength="20">
-        <button onclick="confirmUsername()" style="width:100%;padding:12px;border-radius:var(--rm);border:none;background:var(--accent);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer">Save Name</button>
-        ${!FB_CONFIGURED?'<div style="margin-top:10px;font-size:12px;color:var(--amber);text-align:center">⚠ Firebase not configured — comparison won't work until you add your config</div>':""}
-      </div>`;
-  } else {
-    d.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text)">${username}</div>
-          <div class="sync-status">
-            <div class="sync-dot ${FB_CONFIGURED?"syncing":""}" id="sync-dot"></div>
-            <span id="sync-status-text" style="font-size:11px;color:var(--muted)">${FB_CONFIGURED?"Connecting...":"Firebase not configured"}</span>
-          </div>
-        </div>
-        <button onclick="changeUsername()" style="background:none;border:1px solid var(--border);border-radius:var(--rm);color:var(--muted);padding:5px 10px;font-size:12px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700">Change</button>
-      </div>`;
-  }
-}
-
-function confirmUsername(){
-  const name = document.getElementById("username-field")?.value.trim();
-  if(!name){ alert("Enter a name first."); return; }
-  saveUsername(name);
-  renderUsernameArea();
-  if(FB_CONFIGURED && window.FB_READY){
-    setTimeout(()=>{ syncRanksToFirebase(); listenForPartner(); }, 500);
-  }
-  renderRanks();
-}
-
-function changeUsername(){
-  if(!confirm("Change your name? Your old rank data will stay under the old name.")) return;
-  sv("bb_username", "");
-  renderUsernameArea();
-}
-
-// Compare view — side by side
+// ── Compare view ───────────────────────────────────────────────────────────
 function renderCompare(){
-  const d = document.getElementById("compare-body");
-  if(!d) return;
-  const myUsername    = getUsername();
-  const myProfile     = getProfile();
-  const myBests       = getBestPerExercise();
-  const myRankIndices = [];
-
-  // Build my exercise ranks
-  const myExRanks = {};
-  Object.entries(myBests).forEach(([name, data])=>{
-    const ratio   = data.isPullup ? data.reps : data.orm / myProfile.bw;
-    const rankIdx = getRankForValue(name, ratio, myProfile.gender);
-    myExRanks[name] = rankIdx;
-    if(rankIdx >= 0) myRankIndices.push(rankIdx);
+  const inner=document.getElementById("compare-inner");
+  if(!inner)return;
+  const profile=getProfile();
+  const bw=profile.bw, gender=profile.gender, myName=profile.username;
+  const bests=getBestPerExercise();
+  const myExRanks={};
+  Object.entries(bests).forEach(([name,data])=>{
+    const ratio=data.isPullup?data.reps:data.orm/bw;
+    myExRanks[name]=getRankForValue(name,ratio,gender);
   });
-  const myOverallIdx = myRankIndices.length
-    ? myRankIndices.sort((a,b)=>a-b)[Math.floor(myRankIndices.length/2)]
-    : -1;
-  const myOverall = myOverallIdx >= 0 ? RANKS[myOverallIdx] : null;
+  const myOverall=computeOverallIdx(myExRanks);
+  const partner=_partnerData;
+  const partnerName=partner?.username||"Partner";
+  const partnerOverall=partner?.overallIdx??-1;
+  const myRank=myOverall>=0?RANKS[myOverall]:null;
+  const pRank=partnerOverall>=0?RANKS[partnerOverall]:null;
+  const myWins=myOverall>partnerOverall;
+  const tied=myOverall===partnerOverall&&myOverall>=0;
 
-  // Partner data
-  const partner      = _partnerData;
-  const partnerName  = partner?.username || "Partner";
-  const partnerOverallIdx = partner?.overallIdx ?? -1;
-  const partnerOverall    = partnerOverallIdx >= 0 ? RANKS[partnerOverallIdx] : null;
+  if(!partner){
+    inner.innerHTML=`
+      <div class="rank-card" style="text-align:center;padding:24px">
+        <div style="font-size:32px;margin-bottom:8px">👥</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px">Waiting for partner</div>
+        <div style="font-size:13px;color:var(--muted)">${FB_CONFIGURED&&window.FB_READY
+          ?"Their ranks will appear here once they set up their profile on their phone"
+          :"Firebase is not connected — check your setup"}</div>
+      </div>`;
+    return;
+  }
 
-  // Overall comparison header
-  const myWins = myOverallIdx > partnerOverallIdx;
-  const tied   = myOverallIdx === partnerOverallIdx;
-
-  let html = "";
-
-  // Overall side by side
-  html += `<div class="compare-grid">
+  // Overall cards
+  let html=`<div class="compare-grid">
     <div class="compare-card${myWins||tied?" winner":""}">
-      <div class="compare-name">${myUsername||"Me"}</div>
-      <div class="compare-rank-big">${myOverall?.icon||"—"}</div>
-      <div class="compare-rank-name ${myOverall?.cls||""}">${myOverall?.name||"Unranked"}</div>
+      <div class="compare-name">${myName}</div>
+      <div class="compare-rank-big">${myRank?.icon||"—"}</div>
+      <div class="compare-rank-name ${myRank?.cls||""}">${myRank?.name||"Unranked"}</div>
     </div>
     <div class="compare-card${!myWins&&!tied?" winner":""}">
       <div class="compare-name">${partnerName}</div>
-      <div class="compare-rank-big">${partnerOverall?.icon||"—"}</div>
-      <div class="compare-rank-name ${partnerOverall?.cls||""}">${partnerOverall?.name||"Unranked"}</div>
+      <div class="compare-rank-big">${pRank?.icon||"—"}</div>
+      <div class="compare-rank-name ${pRank?.cls||""}">${pRank?.name||"Unranked"}</div>
     </div>
   </div>
-  ${tied?`<div style="text-align:center;font-size:13px;color:var(--amber);margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700">⚖ TIED</div>`
-        :`<div style="text-align:center;font-size:13px;color:var(--accent);margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;font-weight:700">
-    ${myWins?`${myUsername||"You"} leads 🔥`:`${partnerName} leads 💪`}
-  </div>`}`;
+  <div style="text-align:center;font-size:14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:12px;color:${tied?"var(--amber)":myWins?"var(--green)":"var(--accent)"}">
+    ${tied?"⚖️ TIED":myWins?`${myName} leads 🔥`:`${partnerName} leads 💪`}
+  </div>`;
 
-  // Per-exercise comparison
-  if(!partner){
-    html += `<div class="empty"><i class="ti ti-users"></i><p class="empty-t">Waiting for partner</p><p class="empty-s">${FB_CONFIGURED?"Their ranks will appear here once they set up the app":"Configure Firebase to enable comparison"}</p></div>`;
-  } else {
-    // All exercises from both people
-    const allEx = new Set([...Object.keys(myExRanks), ...Object.keys(partner.exercises||{})]);
-    html += `<div class="rank-card">`;
-    [...allEx].forEach(name=>{
-      const myIdx  = myExRanks[name] ?? -1;
-      const pIdx   = partner.exercises?.[name]?.rankIdx ?? -1;
-      const myRank = myIdx >= 0 ? RANKS[myIdx] : null;
-      const pRank  = pIdx  >= 0 ? RANKS[pIdx]  : null;
-      const iWin   = myIdx > pIdx;
-      const theyWin= pIdx  > myIdx;
-      html += `<div class="rank-ex-row">
-        <div class="rank-ex-name" style="flex:1">${name}</div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span class="${myRank?`rank-badge ${myRank.cls}`:""}">
-            ${myRank?`${myRank.icon} ${myRank.name}`:"—"}
-            ${iWin?` 🔥`:""}
-          </span>
-          <span style="font-size:11px;color:var(--hint)">vs</span>
-          <span class="${pRank?`rank-badge ${pRank.cls}`:""}">
-            ${pRank?`${pRank.icon} ${pRank.name}`:"—"}
-            ${theyWin?` 💪`:""}
-          </span>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-    html += `<div style="font-size:11px;color:var(--hint);text-align:center;padding:4px 0 10px">Last synced: ${partner.updatedAt?new Date(partner.updatedAt).toLocaleString():"never"}</div>`;
-  }
-  d.innerHTML = html;
+  // Per-exercise breakdown
+  const allEx=new Set([...Object.keys(myExRanks),...Object.keys(partner.exercises||{})]);
+  html+=`<div class="rank-card">`;
+  [...allEx].forEach(name=>{
+    const myIdx=myExRanks[name]??-1;
+    const pIdx=partner.exercises?.[name]?.rankIdx??-1;
+    const myR=myIdx>=0?RANKS[myIdx]:null;
+    const pR=pIdx>=0?RANKS[pIdx]:null;
+    const iWin=myIdx>pIdx, theyWin=pIdx>myIdx;
+    html+=`<div class="rank-ex-row">
+      <div class="rank-ex-name" style="flex:1;min-width:0">${name}</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <span class="${myR?`rank-badge ${myR.cls}`:""}" style="${!myR?"color:var(--hint);font-size:12px":""}">
+          ${myR?myR.icon+" "+myR.name+(iWin?" 🔥":""):"—"}
+        </span>
+        <span style="font-size:10px;color:var(--hint)">vs</span>
+        <span class="${pR?`rank-badge ${pR.cls}`:""}" style="${!pR?"color:var(--hint);font-size:12px":""}">
+          ${pR?pR.icon+" "+pR.name+(theyWin?" 💪":""):"—"}
+        </span>
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  html+=`<div style="font-size:11px;color:var(--hint);text-align:center;padding:4px 0 12px">Partner last synced: ${partner.updatedAt?new Date(partner.updatedAt).toLocaleString():"never"}</div>`;
+  inner.innerHTML=html;
 }
+
+// ── Trigger sync after workout finishes ──────────────────────────────────
+function renderUsernameArea(){} // no-op, kept for compat
 
 // ─── BACKUP & RESTORE ────────────────────────────────────────────────────────
 function exportData(){
